@@ -1,14 +1,38 @@
 import './App.css';
+import { AnalysisValues } from './components/AnalysisValues';
 import { Header } from './components/Header';
-import { Step } from './components/Step';
+import { ProcessBar } from './components/ProcessBar';
+import { Map } from './components/Map';
+import { useState } from 'react';
+import { ConfigurationData, DistrictingData, MapData } from './types';
 
 function App() {
+
+  const [mapData, setMapData] = useState<MapData>()
+  const [configurationData, setConfigurationData] = useState<ConfigurationData>()
+  const [districtingData, setDistrictingData] = useState<DistrictingData>()
+
+  function onUploadDone(data: MapData) {
+    setMapData(data);
+    setDistrictingData(undefined)
+  }
+
+  function onConfigurationDone(data: ConfigurationData) {
+    setConfigurationData(data);
+    setDistrictingData(undefined)
+  }
+
+  function onGeneratingDone(data: DistrictingData) {
+    setDistrictingData(data);
+  }
+
   return <>
     <Header />
-    <Step state="finished" />
-    <Step state="finished" />
-    <Step state="error" />
-    <Step state="todo" />
+    <div className='flex'>
+      <ProcessBar onUploadDone={onUploadDone} onConfigurationDone={onConfigurationDone} onGeneratingDone={onGeneratingDone} mapData={mapData} configurationData={configurationData} districtingData={districtingData} />
+      <Map mapData={mapData} configurationData={configurationData} districtingData={districtingData} />
+      <AnalysisValues />
+    </div>
   </>
 }
 
