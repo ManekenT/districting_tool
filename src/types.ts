@@ -1,6 +1,6 @@
 export type State = "todo" | "finished" | "error"
 export type MapData = {
-    data: string
+    data: any
 }
 export type ConfigurationData = {
     algorithm: Algorithm

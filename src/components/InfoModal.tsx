@@ -1,6 +1,5 @@
 import { Dialog } from "@headlessui/react"
 import { Fragment, useState } from "react"
-import { Button } from "./Button"
 
 export function InfoModal() {
     let [isOpen, setIsOpen] = useState(false)

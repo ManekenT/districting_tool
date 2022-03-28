@@ -2,7 +2,7 @@ import './App.css';
 import { AnalysisValues } from './components/AnalysisValues';
 import { Header } from './components/Header';
 import { ProcessBar } from './components/ProcessBar';
-import { Map } from './components/Map';
+import { DistrictMap } from './components/Map';
 import { useState } from 'react';
 import { ConfigurationData, DistrictingData, MapData } from './types';
 
@@ -30,7 +30,7 @@ function App() {
     <Header />
     <div className='flex'>
       <ProcessBar onUploadDone={onUploadDone} onConfigurationDone={onConfigurationDone} onGeneratingDone={onGeneratingDone} mapData={mapData} configurationData={configurationData} districtingData={districtingData} />
-      <Map mapData={mapData} configurationData={configurationData} districtingData={districtingData} />
+      <DistrictMap mapData={mapData} configurationData={configurationData} districtingData={districtingData} />
       <AnalysisValues />
     </div>
   </>

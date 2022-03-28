@@ -14,7 +14,7 @@ interface Props {
 }
 
 export function ProcessBar(props: Props) {
-    return <div className="w-1/4 h-screen bg-slate-600">
+    return <div className="w-1/6 h-screen bg-slate-600">
         <Title title="Anleitung" />
         <UploadStep onUploadDone={props.onUploadDone} mapData={props.mapData} />
         <ConfigurationStep onConfigurationDone={props.onConfigurationDone} configurationData={props.configurationData} />

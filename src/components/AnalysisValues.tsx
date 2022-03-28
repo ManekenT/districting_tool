@@ -2,7 +2,7 @@ import { Title } from "./Title"
 import { ValueComparison } from "./ValueComparison"
 
 export function AnalysisValues() {
-    return <div className="w-1/4 h-screen bg-slate-600 text-slate-50">
+    return <div className="w-1/6 h-screen bg-slate-600 text-slate-50">
         <Title title="Kennzahlen" />
         <div className="grid grid-cols-2 text-center">
             <div className="p-2">Alte Wahlbezirke</div>

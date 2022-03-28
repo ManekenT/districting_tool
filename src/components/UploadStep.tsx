@@ -1,6 +1,7 @@
 import { MapData, State } from "../types";
 import { Button } from "./Button";
 import { Step } from "./Step";
+import wahlbezirke from '../resources/bundestagswahlkreise.json';
 
 interface Props {
     onUploadDone: (data: MapData) => void
@@ -10,7 +11,7 @@ interface Props {
 export function UploadStep(props: Props) {
 
     function onUploadMapData() {
-        let mapData: MapData = { data: "Kartendaten" }
+        let mapData: MapData = { data: wahlbezirke }
         props.onUploadDone(mapData)
     }
 
