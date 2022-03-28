@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/districting_tool/static/css/main.8925897d.css",
-    "main.js": "/districting_tool/static/js/main.a0c7bb26.js",
+    "main.css": "/districting_tool/static/css/main.c18aed83.css",
+    "main.js": "/districting_tool/static/js/main.abeaff04.js",
     "static/js/787.0a1a1b55.chunk.js": "/districting_tool/static/js/787.0a1a1b55.chunk.js",
     "index.html": "/districting_tool/index.html",
-    "main.8925897d.css.map": "/districting_tool/static/css/main.8925897d.css.map",
-    "main.a0c7bb26.js.map": "/districting_tool/static/js/main.a0c7bb26.js.map",
+    "main.c18aed83.css.map": "/districting_tool/static/css/main.c18aed83.css.map",
+    "main.abeaff04.js.map": "/districting_tool/static/js/main.abeaff04.js.map",
     "787.0a1a1b55.chunk.js.map": "/districting_tool/static/js/787.0a1a1b55.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.8925897d.css",
-    "static/js/main.a0c7bb26.js"
+    "static/css/main.c18aed83.css",
+    "static/js/main.abeaff04.js"
   ]
 }
