@@ -30,7 +30,7 @@ function App() {
     <Header />
     <div className='flex'>
       <ProcessBar onUploadDone={onUploadDone} onConfigurationDone={onConfigurationDone} onGeneratingDone={onGeneratingDone} mapData={mapData} configurationData={configurationData} districtingData={districtingData} />
-      <DistrictMap mapData={mapData} configurationData={configurationData} districtingData={districtingData} />
+      <DistrictMap mapData={mapData} districtingData={districtingData} />
       <AnalysisValues />
     </div>
   </>
