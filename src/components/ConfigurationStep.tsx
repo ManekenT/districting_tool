@@ -1,50 +1,88 @@
 import { RadioGroup } from "@headlessui/react";
-import { Algorithm, ConfigurationData, State } from "../types";
+import { algorithms } from "../App";
+import { Algorithm, Configuration } from "../types";
+import { InfoModal } from "./InfoModal";
+import { Slider } from "./Slider";
 import { Step } from "./Step";
 
 interface Props {
-    onConfigurationDone: (configurationData: ConfigurationData) => void
-    configurationData?: ConfigurationData
+    onConfigurationDone: (configuration: Configuration) => void
+    configuration: Configuration
 }
 
 export function ConfigurationStep(props: Props) {
 
-    function onConfigurationDone(algorithm: Algorithm) {
-        if (algorithm !== undefined) {
-            console.log(algorithm);
-            let configurationData: ConfigurationData = {
-                algorithm: algorithm,
-                weightingValues: "Gewichtung"
-            }
-            props.onConfigurationDone(configurationData)
+    function updateAlgorithm(algorithm: Algorithm) {
+        console.log(algorithm);
+        let configurationData: Configuration = {
+            algorithm: algorithm,
+            weightingValues: props.configuration.weightingValues
         }
+        props.onConfigurationDone(configurationData)
     }
 
-    let state: State;
-    if (props.configurationData !== undefined) {
-        state = "finished"
-    } else {
-        state = "todo"
+    function updateCompactness(value: number) {
+        let configurationData: Configuration = {
+            algorithm: props.configuration.algorithm,
+            weightingValues: {
+                compactness: value,
+                populationEquality: props.configuration.weightingValues.populationEquality
+            }
+        }
+        props.onConfigurationDone(configurationData)
     }
 
-    return <Step state={state} stepIndex={2} title="Algorithmus auswählen und Variablen gewichten">
-        <RadioGroup value={props.configurationData?.algorithm} onChange={onConfigurationDone}>
-            <RadioGroup.Label>Algorithmus</RadioGroup.Label>
-            <RadioGroup.Option value="Algorithmus 1">
-                {({ checked }) => (
-                    <span className={checked ? 'bg-blue-200' : ''}>Algorithmus 1</span>
-                )}
-            </RadioGroup.Option>
-            <RadioGroup.Option value="Algorithmus 2">
-                {({ checked }) => (
-                    <span className={checked ? 'bg-blue-200' : ''}>Algorithmus 2</span>
-                )}
-            </RadioGroup.Option>
-            <RadioGroup.Option value="Algorithmus 3">
-                {({ checked }) => (
-                    <span className={checked ? 'bg-blue-200' : ''}>Algorithmus 3</span>
-                )}
-            </RadioGroup.Option>
-        </RadioGroup>
-    </Step>
+    function updatePopulationEquality(value: number) {
+        let configurationData: Configuration = {
+            algorithm: props.configuration.algorithm,
+            weightingValues: {
+                compactness: props.configuration.weightingValues.compactness,
+                populationEquality: value
+            }
+        }
+        props.onConfigurationDone(configurationData)
+    }
+
+    return <Step finished={props.configuration.algorithm !== undefined} stepIndex={2} title="Algorithmus auswählen und Variablen gewichten">
+        <div className="w-full h-full space-y-4">
+            <RadioGroup value={props.configuration?.algorithm} onChange={updateAlgorithm}>
+                <div className="space-y-2">
+                    {algorithms.map((algo) => {
+                        return <RadioGroup.Option value={algo.name} key={algo.name}
+                            className={({ active, checked }) =>
+                                `${active
+                                    ? 'ring-1 ring-offset-1 ring-offset-slate-200 ring-slate-300'
+                                    : ''
+                                }
+                        ${checked ? 'bg-slate-200 text-slate-700' : 'bg-slate-700'
+                                }
+                    relative rounded-lg shadow-md px-5 py-4 cursor-pointer flex focus:outline-none`
+                            }
+                        >
+                            {({ active, checked }) => (
+                                <>
+                                    <div className="flex items-center justify-between w-full text-sm">
+                                        <RadioGroup.Label
+                                            as="p"
+                                            className={`font-medium  ${checked ? 'text-slate-700 border-slate-700' : 'text-slate-50'}`}
+                                        >
+                                            {algo.name}
+                                        </RadioGroup.Label>
+                                        <InfoModal ></InfoModal>
+                                    </div>
+                                </>
+                            )}
+                        </RadioGroup.Option>
+                    })
+                    }
+                </div>
+            </RadioGroup>
+            <div className="flex gap-2 flex-col">
+                <div className="">Compactness</div>
+                <Slider onChange={updateCompactness} defaultValue={0} max={10} min={0}></Slider>
+                <div className="">Population Equality</div>
+                <Slider onChange={updatePopulationEquality} defaultValue={0} max={10} min={0}></Slider>
+            </div>
+        </div>
+    </Step >
 }

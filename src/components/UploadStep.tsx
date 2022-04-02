@@ -1,39 +1,36 @@
-import { MapData, State } from "../types";
+import { Districts, GeoMap } from "../types";
 import { Button } from "./Button";
 import { Step } from "./Step";
-import { generateMap } from "../util/districtGenerator";
+import { generateInitialDistricts, generateMap } from "../util/districtGenerator";
+import { Slider } from "./Slider";
+import { useState } from "react";
 
 interface Props {
-    onUploadDone: (data: MapData) => void
-    mapData?: MapData
+    onUploadDone: (map: GeoMap, districts: Districts) => void
+    map?: GeoMap
+    districtsOld?: Districts
 }
 
 export function UploadStep(props: Props) {
 
+    const [width, setWidth] = useState(10);
+    const [height, setHeight] = useState(6);
+
     function onUploadMapData() {
-        let mapData: MapData = generateMap(12, 8);
-        props.onUploadDone(mapData)
+        let map = generateMap(width, height);
+        let districts = generateInitialDistricts(map);
+        props.onUploadDone(map, districts);
     }
 
-    let bottomComponent;
-    let topComponent;
-    let state: State;
-    if (props.mapData !== undefined) {
-        topComponent = "Andere Kartendaten auswählen"
-        bottomComponent = <Button onClick={onUploadMapData} title="Ersetzen"></Button>
-        state = "finished"
-    } else {
-        topComponent = "Kartendaten auswählen"
-        bottomComponent = <Button onClick={onUploadMapData} title="Laden"></Button>
-        state = "todo"
-    }
-
-    return <Step state={state} stepIndex={1} title="Kartendaten laden">
-        <div className="border-2 border-slate-400 rounded-xl h-32 flex items-center justify-center">
-            {topComponent}
+    return <Step finished={props.map !== undefined && props.districtsOld !== undefined} stepIndex={1} title="Kartendaten laden">
+        <div className="flex gap-2 flex-col">
+            <div className="">Höhe</div>
+            <Slider onChange={setHeight} defaultValue={height} max={16} min={0}></Slider>
+            <div className="">Breite</div>
+            <Slider onChange={setWidth} defaultValue={width} max={16} min={0}></Slider>
         </div>
         <div className="flex justify-end mt-4">
-            {bottomComponent}
+            <Button onClick={onUploadMapData} title="Laden"></Button>
         </div>
     </Step>
 }

@@ -1,7 +1,18 @@
+import { Districts, GeoMap } from "../types"
+import { calculateEfficiencyGap } from "../util/districtGenerator"
 import { Title } from "./Title"
 import { ValueComparison } from "./ValueComparison"
 
-export function AnalysisValues() {
+interface Props {
+    map?: GeoMap
+    districtsOld?: Districts
+    districtsNew?: Districts
+}
+
+export function AnalysisValues(props: Props) {
+    if (props.map !== undefined && props.districtsOld !== undefined) {
+        calculateEfficiencyGap(props.map, props.districtsOld);
+    }
     return <div className="w-1/6 h-screen bg-slate-600 text-slate-50">
         <Title title="Kennzahlen" />
         <div className="grid grid-cols-2 text-center">
