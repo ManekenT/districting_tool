@@ -1,7 +1,5 @@
 import { parties } from "../App";
-import { GeoMap, Direction, Party, Districts } from "../types";
-
-
+import { Direction, Districts, GeoMap, Votes } from "../types";
 
 export function generateInitialDistricts(map: GeoMap): Districts {
     let districts: Districts = []
@@ -29,7 +27,7 @@ export function generateMap(width: number, height: number): GeoMap {
             let isVoter = Math.random() < 0.9;
             let party;
             if (isVoter) {
-                party = parties[getRandomInt(parties.length)];
+                party = Math.random() < 0.5 ? parties.blue : parties.yellow;
             }
             citizenRow[x] = {
                 id: y * width + x,
@@ -41,7 +39,7 @@ export function generateMap(width: number, height: number): GeoMap {
     return citizens;
 }
 
-export function getDirectionsOfDistrictBorders(x: number, y: number, districts: Districts): Direction[] {
+export function getDirectionsOfDistrictBorders(x: number, y: number, districts: Districts, includeMapEdge: boolean = false): Direction[] {
     let directions: Direction[] = [];
     const districtId = districts[y][x];
     let northId;
@@ -63,71 +61,108 @@ export function getDirectionsOfDistrictBorders(x: number, y: number, districts: 
     }
     if (northId !== undefined && northId !== districtId) {
         directions.push("North");
+    } else if (northId === undefined && includeMapEdge) {
+        directions.push("North");
     }
     if (southId !== undefined && southId !== districtId) {
+        directions.push("South");
+    } else if (southId === undefined && includeMapEdge) {
         directions.push("South");
     }
     if (westId !== undefined && westId !== districtId) {
         directions.push("West");
+    } else if (westId === undefined && includeMapEdge) {
+        directions.push("West");
     }
     if (eastId !== undefined && eastId !== districtId) {
+        directions.push("East");
+    } else if (eastId === undefined && includeMapEdge) {
         directions.push("East");
     }
     return directions;
 }
 
-function getRandomInt(max: number) {
-    return Math.floor(Math.random() * max);
-}
-
-function calculateVotesPerDistrict(map: GeoMap, districts: Districts): Map<Party, Map<number, number>> {
-    let votes: Map<Party, Map<number, number>> = new Map();
+function calculateVotesPerDistrict(map: GeoMap, districts: Districts): Map<number, Votes> {
+    let votes: Map<number, Votes> = new Map();
     map.forEach((citizenColumn, y) => {
         citizenColumn.forEach((citizen, x) => {
             if (citizen.vote !== undefined) {
-                // has party been voted for yet?
-                if (!votes.has(citizen.vote)) {
-                    votes.set(citizen.vote, new Map())
-                }
-                let voteMap = votes.get(citizen.vote)!;
-
                 let district = districts[y][x]
-                if (!voteMap.has(district)) {
-                    voteMap.set(district, 0)
+                if (!votes.has(district)) {
+                    votes.set(district, { yellow: 0, blue: 0 })
                 }
-                let voteCount = voteMap.get(district)!
-                voteMap.set(district, voteCount + 1)
+                let partyVotes = votes.get(district)!
+
+                if (citizen.vote === parties.blue) {
+                    partyVotes.blue++
+                } else if (citizen.vote === parties.yellow) {
+                    partyVotes.yellow++;
+                }
             }
         });
     });
     return votes;
 }
 
-function calculateWastedVotesPerDistrict(votes: Map<Party, Map<number, number>>): Map<Party, Map<number, number>> {
-    let partyVotes: Map<Party, number> = new Map();
-    votes.forEach((value, key) => {
-        partyVotes.set(key, Array.from(value.values()).reduce((i, j) => { return i + j }, 0))
-    })
-    let winner = Array.from(partyVotes.keys()).reduce((a, b) => { return partyVotes.get(a)! > partyVotes.get(b)! ? a : b });
-    console.log(winner);
-    const totalVotes = Array.from(partyVotes.values()).reduce((a, b) => { return a + b });
-    const threshhold = Math.floor(totalVotes / votes.keys.length) + 1 // or divide by 2?
-    let wastedVotes: Map<Party, Map<number, number>> = new Map();
-
+function calculateWastedVotesPerDistrict(votes: Map<number, Votes>): Map<number, Votes> {
+    let wastedVotes: Map<number, Votes> = new Map();
+    Array.from(votes.keys()).forEach((district) => {
+        let partyVotes = votes.get(district)!;
+        let partyWastedVotes: Votes = { yellow: 0, blue: 0 };
+        const totalVotes = partyVotes.blue + partyVotes.yellow
+        const threshhold = Math.floor((totalVotes / 2) + 1)
+        let winner = partyVotes.blue >= partyVotes.yellow ? parties.blue : parties.yellow;
+        if (winner === parties.yellow) {
+            partyWastedVotes = {
+                yellow: partyVotes.yellow - threshhold,
+                blue: partyVotes.blue
+            }
+        } else if (winner === parties.blue) {
+            partyWastedVotes = {
+                blue: partyVotes.blue - threshhold,
+                yellow: partyVotes.yellow
+            }
+        }
+        wastedVotes.set(district, partyWastedVotes);
+    });
     return wastedVotes;
 }
 
-export function calculateEfficiencyGap(map: GeoMap, districts: Districts) {
-    console.log(map);
-    console.log(districts);
-    let votes = calculateVotesPerDistrict(map, districts)
-    console.log(votes);
-
-    //let votes = calculateVotes(districts);
-    //let wastedVotes: number[][] = [];
-    //votes.forEach((votesInDistrict, index) => {
-    //wastedVotes[index.] = calculateWastedVotes(votesInDistrict);
-    //});
-    //console.log(votes)
-    //console.log(wastedVotes)
+function sumDistrictVotes(votesPerDistrict: Map<number, Votes>): Votes {
+    let totalVotes: Votes = {
+        blue: Array.from(votesPerDistrict.keys()).reduce((a, b) => {
+            return a + votesPerDistrict.get(b)!.blue
+        }, 0),
+        yellow: Array.from(votesPerDistrict.keys()).reduce((a, b) => {
+            return a + votesPerDistrict.get(b)!.yellow
+        }, 0)
+    };
+    return totalVotes;
 }
+
+export function calculateEfficiencyGap(map: GeoMap, districts: Districts): { gap: number, wastedVotes: Votes } {
+    let votes = calculateVotesPerDistrict(map, districts)
+    let totalVotes = sumDistrictVotes(votes)
+    let totalVoteCount = totalVotes.blue + totalVotes.yellow;
+    let wastedVotes = calculateWastedVotesPerDistrict(votes)
+    let totalWastedVotes = sumDistrictVotes(wastedVotes)
+
+    let voteDifferences = totalWastedVotes.blue - totalWastedVotes.yellow;
+
+    let efficiencyGap = voteDifferences / totalVoteCount;
+    return {
+        gap: efficiencyGap,
+        wastedVotes: totalWastedVotes
+    }
+}
+
+export function closerToZero(a: number, b: number): number {
+    return Math.abs(b) - Math.abs(a);
+}
+
+export function greater(a: number, b: number): number {
+    return a - b;
+}
+
+
+

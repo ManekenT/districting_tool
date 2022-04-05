@@ -1,8 +1,8 @@
-import { Configuration, Districts, GeoMap } from "../types";
+import { Configuration, Districts, GeoMap } from "../../types";
 import { GeneratingStep } from "./GeneratingStep";
 import { UploadStep } from "./UploadStep";
 import { ConfigurationStep } from "./ConfigurationStep";
-import { Title } from "./Title";
+import { Title } from "../UI/Title";
 
 interface Props {
     onUploadDone: (map: GeoMap, districts: Districts) => void
@@ -19,6 +19,6 @@ export function ProcessBar(props: Props) {
         <Title title="Anleitung" />
         <UploadStep onUploadDone={props.onUploadDone} map={props.map} districtsOld={props.districtsOld} />
         <ConfigurationStep onConfigurationDone={props.onConfigurationDone} configuration={props.configuration} />
-        <GeneratingStep onGeneratingDone={props.onGeneratingDone} map={props.map} configuration={props.configuration} districtsNew={props.districtsNew} />
+        <GeneratingStep onGeneratingDone={props.onGeneratingDone} map={props.map} configuration={props.configuration} districtsOld={props.districtsOld} districtsNew={props.districtsNew} />
     </div>
 }

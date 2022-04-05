@@ -1,8 +1,8 @@
-import { Districts, GeoMap } from "../types";
-import { Button } from "./Button";
+import { Districts, GeoMap } from "../../types";
+import { Button } from "../UI/Button";
 import { Step } from "./Step";
-import { generateInitialDistricts, generateMap } from "../util/districtGenerator";
-import { Slider } from "./Slider";
+import { generateInitialDistricts, generateMap } from "../../util/districtGenerator";
+import { Slider } from "../UI/Slider";
 import { useState } from "react";
 
 interface Props {
@@ -22,7 +22,7 @@ export function UploadStep(props: Props) {
         props.onUploadDone(map, districts);
     }
 
-    return <Step finished={props.map !== undefined && props.districtsOld !== undefined} stepIndex={1} title="Kartendaten laden">
+    return <Step finished={props.map !== undefined && props.districtsOld !== undefined} stepIndex={1} title="Initialisieren">
         <div className="flex gap-2 flex-col">
             <div className="">Höhe</div>
             <Slider onChange={setHeight} defaultValue={height} max={16} min={0}></Slider>

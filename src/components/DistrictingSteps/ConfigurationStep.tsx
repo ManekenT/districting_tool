@@ -1,8 +1,8 @@
 import { RadioGroup } from "@headlessui/react";
-import { algorithms } from "../App";
-import { Algorithm, Configuration } from "../types";
-import { InfoModal } from "./InfoModal";
-import { Slider } from "./Slider";
+import { algorithms } from "../../App";
+import { Algorithm, Configuration } from "../../types";
+import { InfoModal } from "../UI/InfoModal";
+import { Slider } from "../UI/Slider";
 import { Step } from "./Step";
 
 interface Props {
@@ -26,7 +26,8 @@ export function ConfigurationStep(props: Props) {
             algorithm: props.configuration.algorithm,
             weightingValues: {
                 compactness: value,
-                populationEquality: props.configuration.weightingValues.populationEquality
+                populationEquality: props.configuration.weightingValues.populationEquality,
+                contiguity: props.configuration.weightingValues.contiguity
             }
         }
         props.onConfigurationDone(configurationData)
@@ -37,13 +38,26 @@ export function ConfigurationStep(props: Props) {
             algorithm: props.configuration.algorithm,
             weightingValues: {
                 compactness: props.configuration.weightingValues.compactness,
-                populationEquality: value
+                populationEquality: value,
+                contiguity: props.configuration.weightingValues.contiguity
             }
         }
         props.onConfigurationDone(configurationData)
     }
 
-    return <Step finished={props.configuration.algorithm !== undefined} stepIndex={2} title="Algorithmus auswählen und Variablen gewichten">
+    function updateContiguity(value: number) {
+        let configurationData: Configuration = {
+            algorithm: props.configuration.algorithm,
+            weightingValues: {
+                compactness: props.configuration.weightingValues.compactness,
+                populationEquality: props.configuration.weightingValues.populationEquality,
+                contiguity: value
+            }
+        }
+        props.onConfigurationDone(configurationData)
+    }
+
+    return <Step finished={props.configuration.algorithm !== undefined} stepIndex={2} title="Konfigurieren">
         <div className="w-full h-full space-y-4">
             <RadioGroup value={props.configuration?.algorithm} onChange={updateAlgorithm}>
                 <div className="space-y-2">
@@ -82,6 +96,8 @@ export function ConfigurationStep(props: Props) {
                 <Slider onChange={updateCompactness} defaultValue={0} max={10} min={0}></Slider>
                 <div className="">Population Equality</div>
                 <Slider onChange={updatePopulationEquality} defaultValue={0} max={10} min={0}></Slider>
+                <div className="">Contiguity</div>
+                <Slider onChange={updateContiguity} defaultValue={0} max={10} min={0}></Slider>
             </div>
         </div>
     </Step >

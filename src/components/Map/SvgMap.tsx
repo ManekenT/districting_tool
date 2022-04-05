@@ -1,12 +1,15 @@
-import { Transition } from "@headlessui/react";
 import { useState } from "react";
-import { Districts, GeoMap } from "../types"
-import { getDirectionsOfDistrictBorders } from "../util/districtGenerator";
-import { Title } from "./Title";
+import { Districts, GeoMap } from "../../types"
+import { getDirectionsOfDistrictBorders } from "../../util/districtGenerator";
+import { Button } from "../UI/Button";
+import { Title } from "../UI/Title";
+import { Legend } from "./Legend";
 
-const mapResX = 600;
-const mapResY = 500;
-const borderSize = 4;
+const mapResX = 900;
+const mapResY = 600;
+const borderSize = 8;
+
+const districtColors = ["fill-red-200", "fill-green-200", "fill-blue-200"];
 
 interface Props {
     map?: GeoMap
@@ -15,6 +18,9 @@ interface Props {
 }
 
 export function SvgMap(props: Props) {
+    const [drawOld, setDrawOld] = useState(true);
+    let districtsToDraw = drawOld ? props.districtsOld : props.districtsNew;
+
     let mapContent;
     if (props.map !== undefined) {
         let citizens = props.map;
@@ -25,9 +31,14 @@ export function SvgMap(props: Props) {
                 const width = mapResX / citizenRows.length
                 const height = mapResY / citizens.length
                 let color = citizen.vote === undefined ? "fill-slate-500" : citizen.vote.color;
+                let districtColor = "fill-slate-200";
+                if (districtsToDraw !== undefined) {
+                    districtColor = districtColors[districtsToDraw[indexY][indexX]];
+                }
                 return <g key={citizen.id}>
-                    <rect className={"" + color} x={x} y={y} width={width} height={height} />
-                    <text className="text-xs fill-slate-700" x={x + width / 10} y={y + height - height / 15}>{citizen.id}</text>
+                    <rect className={"" + districtColor} x={x} y={y} width={width} height={height} />
+                    <circle className={"" + color} cx={x + width / 2} cy={y + height / 2} r={width / 4}></circle>
+                    <text className="text-lg fill-slate-700" x={x + width / 10} y={y + height - height / 15}>{districtsToDraw && districtsToDraw[indexY][indexX]}</text>
                 </g>
 
             });
@@ -35,8 +46,8 @@ export function SvgMap(props: Props) {
     }
 
     let districtBorders;
-    if (props.districtsOld !== undefined) {
-        let districts = props.districtsOld
+    if (districtsToDraw !== undefined) {
+        let districts = districtsToDraw
         districtBorders = districts.map((districtRows, indexY) => {
             return districtRows.map((district, indexX) => {
                 const x = indexX * (mapResX / districtRows.length)
@@ -55,18 +66,12 @@ export function SvgMap(props: Props) {
             });
         });
     }
-
-    return <div className="w-4/6 h-screen bg-slate-500 text-slate-50">
+    return <div className="w-4/6 bg-slate-600 text-slate-50 border-x-8 border-x-slate-700">
         <Title title="Karte"></Title>
+        <Legend onToggleDistricts={() => { setDrawOld(!drawOld) }}></Legend>
         <svg viewBox={"0 0 " + mapResX + " " + mapResY} >
             {mapContent}
             {districtBorders}
-            <g>
-                <rect key={"north"} className="fill-slate-700" x={0} y={0} width={mapResX} height={borderSize} />
-                <rect key={"west"} className="fill-slate-700" x={0} y={0} width={borderSize} height={mapResY} />
-                <rect key={"south"} className="fill-slate-700" x={0} y={mapResY - borderSize} width={mapResX} height={borderSize} />
-                <rect key={"east"} className="fill-slate-700" x={mapResX - borderSize} y={0} width={borderSize} height={mapResY} />
-            </g>
         </svg >
-    </div>
+    </div >
 }

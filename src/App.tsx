@@ -1,20 +1,21 @@
 import './App.css';
-import { AnalysisValues } from './components/AnalysisValues';
-import { Header } from './components/Header';
-import { ProcessBar } from './components/ProcessBar';
+import { AnalysisValues } from './components/Metrics/AnalysisValues';
+import { Header } from './components/UI/Header';
+import { ProcessBar } from './components/DistrictingSteps/ProcessBar';
 import { useState } from 'react';
-import { Configuration, GeoMap, Party, Algorithm, Districts } from './types';
-import { SvgMap } from './components/SvgMap';
+import { Configuration, GeoMap, Algorithm, Districts, Parties } from './types';
+import { SvgMap } from './components/Map/SvgMap';
 
-export const parties: Party[] = [
-  {
+export const parties: Parties = {
+  yellow: {
     name: "Yellow Party",
     color: "fill-yellow-500",
-  }, {
+  },
+  blue: {
     name: "Blue Party",
     color: "fill-blue-500",
   }
-]
+}
 
 export const algorithms: Algorithm[] = [{
   name: "Simulated Annealing",
@@ -31,6 +32,7 @@ function App() {
   const [map, setMap] = useState<GeoMap>()
   const [configuration, setConfiguration] = useState<Configuration>({
     weightingValues: {
+      contiguity: 0,
       compactness: 0,
       populationEquality: 0
     }

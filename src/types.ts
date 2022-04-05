@@ -10,6 +10,15 @@ export type Party = {
     color: string
 }
 
+export type Parties = {
+    yellow: Party
+    blue: Party
+}
+
+export type Votes = {
+    [Property in keyof Parties]: number
+}
+
 export type Districts = number[][]
 
 export type Configuration = {
@@ -24,8 +33,8 @@ export type Algorithm = {
 
 export type WeightingValues = {
     compactness: number
+    contiguity: number
     populationEquality: number
 }
 
 export type Direction = "North" | "South" | "East" | "West"
-
