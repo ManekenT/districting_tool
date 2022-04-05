@@ -93,11 +93,9 @@ export function ConfigurationStep(props: Props) {
             </RadioGroup>
             <div className="flex gap-2 flex-col">
                 <div className="">Compactness</div>
-                <Slider onChange={updateCompactness} defaultValue={0} max={10} min={0}></Slider>
+                <Slider onChange={updateCompactness} defaultValue={50} max={100} min={0}></Slider>
                 <div className="">Population Equality</div>
-                <Slider onChange={updatePopulationEquality} defaultValue={0} max={10} min={0}></Slider>
-                <div className="">Contiguity</div>
-                <Slider onChange={updateContiguity} defaultValue={0} max={10} min={0}></Slider>
+                <Slider onChange={updatePopulationEquality} defaultValue={50} max={100} min={0}></Slider>
             </div>
         </div>
     </Step >

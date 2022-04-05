@@ -25,3 +25,27 @@ export function compactness(districts: Districts): number {
 function getCompactnessValue(area: number, perimiter: number): number {
     return perimiter / Math.sqrt(area) - 1
 }
+
+export function populationEquality(districts: Districts, expectedPopulation: number): number {
+    let populationPerDistrict: Map<number, number> = new Map();
+    districts.forEach((districtColumns, y) => {
+        districtColumns.forEach((districtId, x) => {
+            let districtValue = populationPerDistrict.get(districtId);
+            if (districtValue === undefined) {
+                districtValue = 0;
+            }
+            districtValue++;
+            populationPerDistrict.set(districtId, districtValue);
+        });
+    });
+    let populationEquality = Array.from(populationPerDistrict.keys()).reduce((a, b) => {
+        let value = populationPerDistrict.get(b)!;
+        return a + getPopulationEqualityValue(value, expectedPopulation);
+    });
+    return populationEquality
+}
+
+function getPopulationEqualityValue(population: number, expectedPopulation: number): number {
+    console.log(population, expectedPopulation);
+    return Math.pow((1 - population / expectedPopulation) * (1 / 0.05), 2)
+}

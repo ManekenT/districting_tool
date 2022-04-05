@@ -21,8 +21,6 @@ export function deepCopyArray(districts: Districts): Districts {
         });
         deepCopy[x] = districtColumnCopy;
     })
-    console.log(districts);
-    console.log(deepCopy);
     return deepCopy;
 }
 
