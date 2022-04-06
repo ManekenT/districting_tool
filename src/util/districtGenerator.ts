@@ -57,7 +57,6 @@ export function getDirectionsOfDistrictBorders(x: number, y: number, districts: 
     }
     if (x < districts[0].length - 1) {
         eastId = districts[y][x + 1]
-
     }
     if (northId !== undefined && northId !== districtId) {
         directions.push("North");

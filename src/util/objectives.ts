@@ -18,7 +18,6 @@ export function compactness(districts: Districts): number {
         let values = compactnessPerDistrict.get(b)!;
         return a + getCompactnessValue(values.area, values.perimiter)
     });
-    console.log(compactness);
     return compactness;
 }
 
@@ -42,10 +41,9 @@ export function populationEquality(districts: Districts, expectedPopulation: num
         let value = populationPerDistrict.get(b)!;
         return a + getPopulationEqualityValue(value, expectedPopulation);
     });
-    return populationEquality
+    return populationEquality / 1000
 }
 
 function getPopulationEqualityValue(population: number, expectedPopulation: number): number {
-    console.log(population, expectedPopulation);
     return Math.pow((1 - population / expectedPopulation) * (1 / 0.05), 2)
 }

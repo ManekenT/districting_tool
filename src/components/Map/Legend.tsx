@@ -14,7 +14,7 @@ export function Legend(props: Props) {
         props.onToggleDistricts();
     }
 
-    return <div className="px-4 text-lg h-14 flex">
+    return <div className="px-4 text-lg h-14 flex justify-center">
         <Switch.Group>
             <div className="flex items-center">
                 <Switch.Label className="mr-4">Alte Bezirke</Switch.Label>
@@ -30,7 +30,7 @@ export function Legend(props: Props) {
                             } inline-block w-4 h-4 transform bg-slate-50 rounded-full`}
                     />
                 </Switch>
-                <Switch.Label className="ml-4">Neue Bezirke</Switch.Label>
+                <Switch.Label className="ml-4 font-semibold">Neue Bezirke</Switch.Label>
             </div>
         </Switch.Group>
 
