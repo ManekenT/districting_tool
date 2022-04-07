@@ -1,43 +1,40 @@
-import { Districts, WeightingValues } from '../types';
+import { DistrictSchema } from '../classes/DistrictSchema';
+import { Constraints, Coordinate, WeightingValues } from '../types';
 import { getDirectionsOfDistrictBorders } from './districtGenerator';
 import { compactness, populationEquality } from './objectives';
 import { deepCopyArray, getRandomPoint } from './util';
 
-export function doSimulatedAnnealing(initialDistricts: Districts, weightingValues: WeightingValues): Districts {
+export function doSimulatedAnnealing(initialDistricts: DistrictSchema, weightingValues: WeightingValues, constraints: Constraints): DistrictSchema {
     var simulatedAnnealing = require('simulated-annealing');
     let districtIdSet = new Set();
-    let populationSize = initialDistricts.length * initialDistricts[0].length
-    initialDistricts.forEach((districtColumn) => {
-        districtColumn.forEach((id => {
-            districtIdSet.add(id);
-        }))
+    let populationSize = initialDistricts.width * initialDistricts.height
+    initialDistricts.forEach((id) => {
+        districtIdSet.add(id);
     })
     let expectedPopulation = populationSize / districtIdSet.size;
-    var result = simulatedAnnealing({
-        initialState: deepCopyArray(initialDistricts),
+    let result = simulatedAnnealing({
+        initialState: initialDistricts,
         tempMax: 15,
         tempMin: 0.001,
-        newState: newState,
+        newState: (districts: DistrictSchema) => newState(districts, constraints),
         getTemp: getTemp,
-        getEnergy: (districts: Districts) => getEnergy(districts, weightingValues, expectedPopulation),
+        getEnergy: (districts: DistrictSchema) => getEnergy(districts, weightingValues, expectedPopulation),
     });
-    console.log(result);
     return result;
 }
 
-function getEnergy(districts: Districts, weightingValues: WeightingValues, expectedPopulation: number) {
+function getEnergy(districts: DistrictSchema, weightingValues: WeightingValues, expectedPopulation: number) {
     let populationEqualityValue = populationEquality(districts, expectedPopulation);
     let compactnessValue = compactness(districts);
-    console.log(populationEqualityValue, compactnessValue)
     let energy = weightingValues.populationEquality * populationEqualityValue + weightingValues.compactness * compactnessValue;
     return energy;
 }
 
-function newState(oldDistricts: Districts): Districts {
+function newState(oldDistricts: DistrictSchema, constraints: Constraints): DistrictSchema {
     let districts = deepCopyArray(oldDistricts);
-    let randomPoint = getRandomPoint(districts[0].length, districts.length);
+    let randomPoint = getRandomPoint(districts.width, districts.height);
     let neighbourPoint = { x: 0, y: 0 };
-    let neighbourDirections = getDirectionsOfDistrictBorders(randomPoint.x, randomPoint.y, districts)
+    let neighbourDirections = getDirectionsOfDistrictBorders(randomPoint, districts)
 
     if (neighbourDirections.length !== 0) {
         let randomDirection = neighbourDirections[Math.floor(Math.random() * neighbourDirections.length)]
@@ -52,98 +49,105 @@ function newState(oldDistricts: Districts): Districts {
             neighbourPoint = { x: randomPoint.x + 1, y: randomPoint.y }
         }
 
-        let districtId = districts[randomPoint.y][randomPoint.x];
-        let neighbourId = districts[neighbourPoint.y][neighbourPoint.x]
-        districts[randomPoint.y][randomPoint.x] = neighbourId
-        let valid = checkConstraints(districts);
+        let districtId = districts.get(randomPoint);
+        let neighbourId = districts.get(neighbourPoint)
+        districts.set(randomPoint, neighbourId);
+        let valid = checkConstraints(districts, constraints);
         if (!valid) {
             //reset ID
-            districts[randomPoint.y][randomPoint.x] = districtId
+            districts.set(randomPoint, districtId)
         }
     }
     return districts;
 }
 
-// linear temperature decreasing
 function getTemp(prevTemperature: number) {
-    console.log(prevTemperature);
     return prevTemperature - 0.001;
 }
 
-function checkConstraints(districts: Districts): boolean {
+function checkConstraints(districts: DistrictSchema, constraints: Constraints): boolean {
     let districtSizes = getDistrictSizes(districts);
-    let districtsChecked: Map<number, boolean> = new Map();
-    for (let y = 0; y < districts.length; y++) {
-        let districtColumn = districts[y];
-        for (let x = 0; x < districtColumn.length; x++) {
-            let districtId = districtColumn[x]
-            let checked = districtsChecked.get(districtId);
-            if (checked === undefined) {
-                checked = false
-            }
-            if (!checked) {
-                districtsChecked.set(districtId, true)
-                let neighbours: { x: number, y: number }[] = [];
-                findNeighboursRecursive(districts, { x: x, y: y }, neighbours);
-                if (neighbours.length !== districtSizes.get(districtId)) {
-                    return false;
+
+    let contiguity = true;
+    if (constraints.contiguity) {
+        let districtsChecked: Map<number, boolean> = new Map();
+
+        for (let y = 0; y < districts.height; y++) {
+            for (let x = 0; x < districts.width; x++) {
+                let coordinate = { x: x, y: y }
+                let id = districts.get(coordinate)
+                let checked = districtsChecked.get(id);
+                if (checked === undefined) {
+                    checked = false
+                }
+                if (!checked) {
+                    districtsChecked.set(id, true)
+                    let neighbours: Coordinate[] = [];
+                    findNeighboursRecursive(districts, coordinate, neighbours);
+                    if (neighbours.length !== districtSizes.get(id)) {
+                        contiguity = false;
+                    }
                 }
             }
         }
     }
-    return true;
+
+    let check = contiguity
+    return check;
 }
 
-function findNeighboursRecursive(districts: Districts, coordinates: { x: number, y: number }, knownCoordinates: { x: number, y: number }[]) {
-    const x = coordinates.x;
-    const y = coordinates.y;
-    const districtId = districts[y][x]
+function findNeighboursRecursive(districts: DistrictSchema, coordinate: Coordinate, knownCoordinates: Coordinate[]) {
+    const x = coordinate.x;
+    const y = coordinate.y;
+    const districtId = districts.get(coordinate)
+    const coordNorth = { x: x, y: y - 1 };
+    const coordSouth = { x: x, y: y + 1 }
+    const coordWest = { x: x - 1, y: y }
+    const coordEast = { x: x + 1, y: y }
     let northId;
     let southId;
     let westId;
     let eastId;
     if (y > 0) {
-        northId = districts[y - 1][x]
+        northId = districts.get(coordNorth)
     }
-    if (y < districts.length - 1) {
-        southId = districts[y + 1][x]
+    if (y < districts.height - 1) {
+        southId = districts.get(coordSouth)
     }
     if (x > 0) {
-        westId = districts[y][x - 1]
+        westId = districts.get(coordWest)
     }
-    if (x < districts[0].length - 1) {
-        eastId = districts[y][x + 1]
+    if (x < districts.width - 1) {
+        eastId = districts.get(coordEast)
     }
     if (knownCoordinates.find((element) => element.x === x && element.y === y)) {
         return;
     }
-    knownCoordinates.push(coordinates);
+    knownCoordinates.push(coordinate);
     if (northId !== undefined && northId === districtId) {
-        findNeighboursRecursive(districts, { x: x, y: y - 1 }, knownCoordinates)
+        findNeighboursRecursive(districts, coordNorth, knownCoordinates)
     }
     if (southId !== undefined && southId === districtId) {
-        findNeighboursRecursive(districts, { x: x, y: y + 1 }, knownCoordinates);
+        findNeighboursRecursive(districts, coordSouth, knownCoordinates);
     }
     if (westId !== undefined && westId === districtId) {
-        findNeighboursRecursive(districts, { x: x - 1, y: y }, knownCoordinates);
+        findNeighboursRecursive(districts, coordWest, knownCoordinates);
     }
     if (eastId !== undefined && eastId === districtId) {
-        findNeighboursRecursive(districts, { x: x + 1, y: y }, knownCoordinates);
+        findNeighboursRecursive(districts, coordEast, knownCoordinates);
     }
 }
 
-function getDistrictSizes(districts: Districts): Map<number, number> {
+function getDistrictSizes(districts: DistrictSchema): Map<number, number> {
     let districtSizes: Map<number, number> = new Map();
-    districts.forEach((districtColumns, y) => {
-        districtColumns.forEach((districtId, x) => {
-            let size = districtSizes.get(districtId);
-            if (size === undefined) {
-                size = 0
-            }
-            size = size + 1;
-            districtSizes.set(districtId, size);
-        })
-    });
+    districts.forEach((id) => {
+        let size = districtSizes.get(id);
+        if (size === undefined) {
+            size = 0
+        }
+        size = size + 1;
+        districtSizes.set(id, size);
+    })
     return districtSizes
 }
 

@@ -17,7 +17,6 @@ export function Step(props: Props) {
         </div>
         <div className="p-4">
             {props.children}
-
         </div>
     </div >
 }

@@ -1,14 +1,15 @@
-import { Districts, GeoMap } from "../../types";
 import { Button } from "../UI/Button";
 import { Step } from "./Step";
-import { generateInitialDistricts, generateMap } from "../../util/districtGenerator";
 import { Slider } from "../UI/Slider";
 import { useState } from "react";
+import { GeoMap } from "../../classes/Map";
+import { DistrictSchema } from "../../classes/DistrictSchema";
 
 interface Props {
-    onUploadDone: (map: GeoMap, districts: Districts) => void
+    setMap: (map: GeoMap) => void
+    setDistrictsOld: (districts: DistrictSchema) => void
     map?: GeoMap
-    districtsOld?: Districts
+    districtsOld?: DistrictSchema
 }
 
 export function UploadStep(props: Props) {
@@ -17,12 +18,13 @@ export function UploadStep(props: Props) {
     const [height, setHeight] = useState(6);
 
     function onUploadMapData() {
-        let map = generateMap(width, height);
-        let districts = generateInitialDistricts(map);
-        props.onUploadDone(map, districts);
+        let map = new GeoMap(width, height);
+        let districts = new DistrictSchema(width, height);
+        props.setMap(map);
+        props.setDistrictsOld(districts)
     }
 
-    return <Step finished={props.map !== undefined && props.districtsOld !== undefined} stepIndex={1} title="Initialisieren">
+    return <Step finished={props.map !== undefined && props.districtsOld !== undefined} stepIndex={1} title="Karte initialisieren">
         <div className="flex gap-2 flex-col">
             <div className="">Höhe</div>
             <Slider onChange={setHeight} defaultValue={height} max={16} min={0}></Slider>

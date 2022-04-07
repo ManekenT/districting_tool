@@ -1,18 +1,16 @@
-import { Districts } from "../types";
+import { DistrictSchema } from "../classes/DistrictSchema";
 import { getDirectionsOfDistrictBorders } from "./districtGenerator";
 
-export function compactness(districts: Districts): number {
+export function compactness(districts: DistrictSchema): number {
     let compactnessPerDistrict: Map<number, { perimiter: number, area: number }> = new Map();
-    districts.forEach((districtColumns, y) => {
-        districtColumns.forEach((districtId, x) => {
-            let districtValues = compactnessPerDistrict.get(districtId);
-            if (districtValues === undefined) {
-                districtValues = { perimiter: 0, area: 0 };
-            }
-            districtValues.area++;
-            districtValues.perimiter += getDirectionsOfDistrictBorders(x, y, districts, true).length / 4;
-            compactnessPerDistrict.set(districtId, districtValues);
-        });
+    districts.forEach((id, coordinate) => {
+        let districtValues = compactnessPerDistrict.get(id);
+        if (districtValues === undefined) {
+            districtValues = { perimiter: 0, area: 0 };
+        }
+        districtValues.area++;
+        districtValues.perimiter += getDirectionsOfDistrictBorders(coordinate, districts, true).length / 4;
+        compactnessPerDistrict.set(id, districtValues);
     });
     let compactness = Array.from(compactnessPerDistrict.keys()).reduce((a, b) => {
         let values = compactnessPerDistrict.get(b)!;
@@ -25,17 +23,15 @@ function getCompactnessValue(area: number, perimiter: number): number {
     return perimiter / Math.sqrt(area) - 1
 }
 
-export function populationEquality(districts: Districts, expectedPopulation: number): number {
+export function populationEquality(districts: DistrictSchema, expectedPopulation: number): number {
     let populationPerDistrict: Map<number, number> = new Map();
-    districts.forEach((districtColumns, y) => {
-        districtColumns.forEach((districtId, x) => {
-            let districtValue = populationPerDistrict.get(districtId);
-            if (districtValue === undefined) {
-                districtValue = 0;
-            }
-            districtValue++;
-            populationPerDistrict.set(districtId, districtValue);
-        });
+    districts.forEach((id) => {
+        let districtValue = populationPerDistrict.get(id);
+        if (districtValue === undefined) {
+            districtValue = 0;
+        }
+        districtValue++;
+        populationPerDistrict.set(id, districtValue);
     });
     let populationEquality = Array.from(populationPerDistrict.keys()).reduce((a, b) => {
         let value = populationPerDistrict.get(b)!;

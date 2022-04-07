@@ -1,24 +1,26 @@
 import { Disclosure } from "@headlessui/react"
-import { Districts, GeoMap } from "../../types"
-import { calculateEfficiencyGap, closerToZero, greater } from "../../util/districtGenerator"
+import { DistrictSchema } from "../../classes/DistrictSchema"
+import { GeoMap } from "../../classes/Map"
+import { efficiencyGap } from "../../util/metrics"
+import { closerToZero, greater } from "../../util/util"
 import { decimalToPercentString } from "../../util/util"
 import { Title } from "../UI/Title"
 import { ValueComparison } from "./ValueComparison"
 
 interface Props {
     map?: GeoMap
-    districtsOld?: Districts
-    districtsNew?: Districts
+    districtsOld?: DistrictSchema
+    districtsNew?: DistrictSchema
 }
 
 export function AnalysisValues(props: Props) {
     let efficiencyGapOld;
     if (props.map !== undefined && props.districtsOld !== undefined) {
-        efficiencyGapOld = calculateEfficiencyGap(props.map, props.districtsOld);
+        efficiencyGapOld = efficiencyGap(props.map, props.districtsOld);
     }
     let efficiencyGapNew;
     if (props.map !== undefined && props.districtsNew !== undefined) {
-        efficiencyGapNew = calculateEfficiencyGap(props.map, props.districtsNew);
+        efficiencyGapNew = efficiencyGap(props.map, props.districtsNew);
     }
     return <div className="w-1/6 h-screen bg-slate-600 text-slate-50">
         <Title title="Kennzahlen" />

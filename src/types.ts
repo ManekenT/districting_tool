@@ -1,4 +1,9 @@
-export type GeoMap = Citizen[][]
+import { DistrictSchema } from "./classes/DistrictSchema"
+
+export type Coordinate = {
+    x: number,
+    y: number
+}
 
 export type Citizen = {
     id: number
@@ -19,22 +24,18 @@ export type Votes = {
     [Property in keyof Parties]: number
 }
 
-export type Districts = number[][]
-
-export type Configuration = {
-    algorithm?: Algorithm
-    weightingValues: WeightingValues
-}
-
 export type Algorithm = {
     name: string
-    algorithm: (mapData: GeoMap) => Citizen[][]
+    algorithm: (districstOld: DistrictSchema, weighting: WeightingValues, constraints: Constraints) => DistrictSchema
 }
 
 export type WeightingValues = {
     compactness: number
-    contiguity: number
     populationEquality: number
+}
+
+export type Constraints = {
+    contiguity: boolean
 }
 
 export type Direction = "North" | "South" | "East" | "West"

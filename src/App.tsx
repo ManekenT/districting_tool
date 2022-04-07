@@ -1,64 +1,61 @@
 import './App.css';
 import { AnalysisValues } from './components/Metrics/AnalysisValues';
 import { Header } from './components/UI/Header';
-import { ProcessBar } from './components/DistrictingSteps/ProcessBar';
 import { useState } from 'react';
-import { Configuration, GeoMap, Algorithm, Districts, Parties } from './types';
+import { Algorithm } from './types';
 import { SvgMap } from './components/Map/SvgMap';
-
-export const parties: Parties = {
-  yellow: {
-    name: "Yellow Party",
-    color: "fill-yellow-500",
-  },
-  blue: {
-    name: "Blue Party",
-    color: "fill-blue-500",
-  }
-}
+import { GeoMap } from './classes/Map';
+import { DistrictSchema } from './classes/DistrictSchema';
+import { Title } from './components/UI/Title';
+import { UploadStep } from './components/DistrictingSteps/UploadStep';
+import { AlgorithmStep } from './components/DistrictingSteps/AlgorithmStep';
+import { WeightingStep } from './components/DistrictingSteps/WeightingStep';
+import { GeneratingStep } from './components/DistrictingSteps/GeneratingStep';
+import { ConstraintStep } from './components/DistrictingSteps/ConstraintsStep';
+import { doSimulatedAnnealing } from './util/simulatedAnnealing';
 
 export const algorithms: Algorithm[] = [{
   name: "Simulated Annealing",
-  algorithm: () => [],
-},
-{
-  name: "Anderer Algorithmus",
-  algorithm: () => [],
+  algorithm: doSimulatedAnnealing,
 }]
 
 
 function App() {
 
   const [map, setMap] = useState<GeoMap>()
-  const [configuration, setConfiguration] = useState<Configuration>({
-    weightingValues: {
-      contiguity: 0,
-      compactness: 0,
-      populationEquality: 0
+  const [algorithm, setAlgorithm] = useState<Algorithm>()
+  const [compactness, setCompactness] = useState<number>()
+  const [populationEquality, setPopulationEquality] = useState<number>()
+  const [contiguity, setContiguity] = useState<boolean>()
+  const [districtsOld, setDistrictsOld] = useState<DistrictSchema>()
+  const [districtsNew, setDistrictsNew] = useState<DistrictSchema>()
+
+  function updateState(updateFunction: (value: any) => void) {
+    return (value: any) => {
+      updateFunction(value);
+      setDistrictsNew(undefined)
+
     }
-  })
-  const [districtsOld, setDistrictsOld] = useState<Districts>()
-  const [districtsNew, setDistrictsNew] = useState<Districts>()
-
-  function onUploadDone(map: GeoMap, districts: Districts) {
-    setMap(map);
-    setDistrictsOld(districts)
-    setDistrictsNew(undefined);
-  }
-
-  function onConfigurationDone(configuration: Configuration) {
-    setConfiguration(configuration);
-    setDistrictsNew(undefined)
-  }
-
-  function onGeneratingDone(districts: Districts) {
-    setDistrictsNew(districts);
   }
 
   return <>
     <Header />
     <div className='flex text-slate-50'>
-      <ProcessBar onUploadDone={onUploadDone} onConfigurationDone={onConfigurationDone} onGeneratingDone={onGeneratingDone} map={map} districtsOld={districtsOld} configuration={configuration} districtsNew={districtsNew} />
+      <div className="w-1/6 h-screen bg-slate-600">
+        <Title title="Anleitung" />
+        <UploadStep map={map} districtsOld={districtsOld} setMap={updateState(setMap)} setDistrictsOld={updateState(setDistrictsOld)} />
+        <AlgorithmStep algorithm={algorithm} setAlgorithm={updateState(setAlgorithm)} />
+        <WeightingStep compactness={compactness} populationEquality={populationEquality} setCompactness={updateState(setCompactness)} setPopulationEquality={updateState(setPopulationEquality)} />
+        <ConstraintStep contiguity={contiguity} setContiguity={updateState(setContiguity)} />
+        <GeneratingStep setDistrictsNew={setDistrictsNew}
+          map={map}
+          algorithm={algorithm}
+          compactness={compactness}
+          populationEquality={populationEquality}
+          contiguity={contiguity}
+          districtsOld={districtsOld}
+          districtsNew={districtsNew} />
+      </div>
       <SvgMap map={map} districtsOld={districtsOld} districtsNew={districtsNew} />
       <AnalysisValues map={map} districtsOld={districtsOld} districtsNew={districtsNew} />
     </div>
