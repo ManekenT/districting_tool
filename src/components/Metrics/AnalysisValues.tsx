@@ -39,7 +39,6 @@ export function AnalysisValues(props: Props) {
 
                 </Disclosure.Panel>
             </Disclosure>
-            <ValueComparison title="Partisan Symmetry" value1={3} value2={2} comparisonFunction={greater}></ValueComparison>
         </div>
 
     </div>

@@ -36,6 +36,7 @@ export type WeightingValues = {
 
 export type Constraints = {
     contiguity: boolean
+    keepDistrictCount: boolean
 }
 
 export type Direction = "North" | "South" | "East" | "West"

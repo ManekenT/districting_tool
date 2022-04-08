@@ -56,4 +56,25 @@ export class DistrictSchema {
             })
         })
     }
+
+    getDistrictSizes(): Map<number, number> {
+        let districtSizes: Map<number, number> = new Map();
+        this.forEach((id) => {
+            let size = districtSizes.get(id);
+            if (size === undefined) {
+                size = 0
+            }
+            size = size + 1;
+            districtSizes.set(id, size);
+        })
+        return districtSizes
+    }
+
+    getDistrictCount(): number {
+        let uniqueDistricts: Set<number> = new Set<number>()
+        this.forEach(id => {
+            uniqueDistricts.add(id);
+        })
+        return uniqueDistricts.size
+    }
 }

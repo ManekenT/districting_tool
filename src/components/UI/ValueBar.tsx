@@ -12,7 +12,7 @@ export function ValueBar(props: Props) {
     return <RadioGroup value={props.value} onChange={props.onChange} className="space-y-2">
         <RadioGroup.Label
             as={"p"}
-            className="text-slate-50 border-slate-700"
+            className="text-slate-50 border-slate-700 pl-2"
         >
             {props.title}
         </RadioGroup.Label>
@@ -21,10 +21,8 @@ export function ValueBar(props: Props) {
                 let displayString = props.displayValue !== undefined ? props.displayValue(value) : value
                 return <RadioGroup.Option value={value} key={value}
                     className={({ active, checked }) =>
-                        `${checked ? "bg-slate-200 text-slate-700" : 'bg-slate-700'} 
-                        ${index === 0 ? "rounded-l-lg" : ""} 
-                        ${index === props.values.length - 1 ? "rounded-r-lg" : ""} 
-                        grow shadow-md px-5 py-2 cursor-pointer flex focus:outline-none`
+                        `${checked ? "bg-slate-200 text-slate-700 shadow-inner" : 'bg-slate-700'} 
+                        grow shadow-md px-5 py-2 cursor-pointer flex focus:outline-none first:rounded-l-lg last:rounded-r-lg`
                     }
                 >
                     {({ active, checked }) => (

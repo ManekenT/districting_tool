@@ -23,10 +23,12 @@ export const algorithms: Algorithm[] = [{
 function App() {
 
   const [map, setMap] = useState<GeoMap>()
+  const [showNewMap, setShowNewMap] = useState(false)
   const [algorithm, setAlgorithm] = useState<Algorithm>()
   const [compactness, setCompactness] = useState<number>()
   const [populationEquality, setPopulationEquality] = useState<number>()
   const [contiguity, setContiguity] = useState<boolean>()
+  const [keepDistrictCount, setKeepDistrictCount] = useState<boolean>()
   const [districtsOld, setDistrictsOld] = useState<DistrictSchema>()
   const [districtsNew, setDistrictsNew] = useState<DistrictSchema>()
 
@@ -38,6 +40,11 @@ function App() {
     }
   }
 
+  function updateDistrictsNew(districts: DistrictSchema) {
+    setDistrictsNew(districts);
+    setShowNewMap(true);
+  }
+
   return <>
     <Header />
     <div className='flex text-slate-50'>
@@ -46,17 +53,19 @@ function App() {
         <UploadStep map={map} districtsOld={districtsOld} setMap={updateState(setMap)} setDistrictsOld={updateState(setDistrictsOld)} />
         <AlgorithmStep algorithm={algorithm} setAlgorithm={updateState(setAlgorithm)} />
         <WeightingStep compactness={compactness} populationEquality={populationEquality} setCompactness={updateState(setCompactness)} setPopulationEquality={updateState(setPopulationEquality)} />
-        <ConstraintStep contiguity={contiguity} setContiguity={updateState(setContiguity)} />
-        <GeneratingStep setDistrictsNew={setDistrictsNew}
+        <ConstraintStep contiguity={contiguity} keepDistrictCount={keepDistrictCount} setContiguity={updateState(setContiguity)} setKeepDistrictCount={updateState(setKeepDistrictCount)} />
+        <GeneratingStep
+          setDistrictsNew={updateDistrictsNew}
           map={map}
           algorithm={algorithm}
           compactness={compactness}
           populationEquality={populationEquality}
           contiguity={contiguity}
+          keepDistrictCount={keepDistrictCount}
           districtsOld={districtsOld}
           districtsNew={districtsNew} />
       </div>
-      <SvgMap map={map} districtsOld={districtsOld} districtsNew={districtsNew} />
+      <SvgMap map={map} showNewDistricts={showNewMap} setShowNewDistricts={setShowNewMap} districtsOld={districtsOld} districtsNew={districtsNew} />
       <AnalysisValues map={map} districtsOld={districtsOld} districtsNew={districtsNew} />
     </div>
   </>

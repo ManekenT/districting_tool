@@ -1,4 +1,3 @@
-import { RadioGroup } from "@headlessui/react";
 import { ValueBar } from "../UI/ValueBar";
 import { Step } from "./Step";
 

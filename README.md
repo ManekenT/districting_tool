@@ -1,3 +1,3 @@
 # districting_tool
 
-https://manekent.github.io/districting_tool/
+https://districting.tomhohendorf.de/

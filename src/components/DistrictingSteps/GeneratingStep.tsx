@@ -11,6 +11,7 @@ interface Props {
     populationEquality?: number
     compactness?: number
     contiguity?: boolean
+    keepDistrictCount?: boolean
     districtsOld?: DistrictSchema
     districtsNew?: DistrictSchema
 }
@@ -23,6 +24,7 @@ export function GeneratingStep(props: Props) {
             && props.populationEquality !== undefined
             && props.compactness !== undefined
             && props.contiguity !== undefined
+            && props.keepDistrictCount !== undefined
             && props.districtsOld !== undefined
     }
 
@@ -36,26 +38,27 @@ export function GeneratingStep(props: Props) {
             compactness: props.compactness!
         }
         let constraints = {
-            contiguity: props.contiguity!
+            contiguity: props.contiguity!,
+            keepDistrictCount: props.keepDistrictCount!
         }
 
         let districts = props.algorithm!.algorithm(districtsOld, weighting, constraints);
         props.setDistrictsNew(districts)
     }
 
-
-    let prerequisitesMet = checkPrerequisites();
-
-    let bottomComponent;
-    if (prerequisitesMet) {
-        bottomComponent = <Button onClick={onGeneratingDistrictingData} title="Bezirke generieren"></Button>
+    let title;
+    let disabled;
+    if (checkPrerequisites()) {
+        title = "Bezirke generieren";
+        disabled = false;
     } else {
-        bottomComponent = <Button title="Daten aus vorangegangenen Schritten fehlen" disabled={true}></Button>
+        title = "Daten aus vorangegangenen Schritten fehlen"
+        disabled = true
     }
 
-    return <Step finished={props.districtsNew !== undefined} stepIndex={3} title="Generieren">
+    return <Step finished={props.districtsNew !== undefined} stepIndex={5} title="Generieren">
         <div className="flex justify-end mt-4">
-            {bottomComponent}
+            <Button className="grow h-20 text-xl font-semibold mx-4" onClick={onGeneratingDistrictingData} title={title} disabled={disabled}></Button>
         </div>
     </Step>
 }

@@ -22,12 +22,8 @@ export function ValueComparison(props: Props) {
             color2 = "bg-yellow-500";
         }
     }
-    let value1String: string = props.value1 === undefined ? "N/A" : props.value1.toString();
-    let value2String: string = props.value2 === undefined ? "N/A" : props.value2.toString();
-    if (props.displayString !== undefined) {
-        value1String = props.displayString(props.value1);
-        value2String = props.displayString(props.value2);
-    }
+    let value1String: string = props.value1 === undefined ? "N/A" : props.displayString !== undefined ? props.displayString(props.value1) : props.value1.toString();
+    let value2String: string = props.value2 === undefined ? "N/A" : props.displayString !== undefined ? props.displayString(props.value2) : props.value2.toString();
     return <div className="grid grid-cols-2">
         <div className=" col-span-2 text-center bg-slate-700 h-12 flex justify-center items-center">{props.title}</div>
         <div className={"text-center p-2 " + color1}>{value1String}</div>

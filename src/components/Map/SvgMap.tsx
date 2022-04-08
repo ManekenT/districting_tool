@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { DistrictSchema } from "../../classes/DistrictSchema";
 import { GeoMap } from "../../classes/Map";
 import { getDirectionsOfDistrictBorders } from "../../util/districtGenerator";
@@ -7,19 +6,20 @@ import { Legend } from "./Legend";
 
 const mapResX = 900;
 const mapResY = 600;
-const borderSize = 8;
+const borderSize = 6;
 
 const districtColors = ["fill-red-200", "fill-green-200", "fill-blue-200"];
 
 interface Props {
     map?: GeoMap
+    showNewDistricts: boolean
+    setShowNewDistricts: (value: boolean) => void
     districtsOld?: DistrictSchema
     districtsNew?: DistrictSchema
 }
 
 export function SvgMap(props: Props) {
-    const [drawOld, setDrawOld] = useState(true);
-    let districtsToDraw = drawOld ? props.districtsOld : props.districtsNew;
+    let districtsToDraw = props.showNewDistricts ? props.districtsNew : props.districtsOld;
 
     let mapContent;
     if (props.map !== undefined) {
@@ -66,12 +66,16 @@ export function SvgMap(props: Props) {
 
         });
     }
-    return <div className="w-4/6 bg-slate-600 text-slate-50 border-x-8 border-x-slate-700">
+    return <div className="w-4/6 bg-slate-500 text-slate-50">
         <Title title="Karte"></Title>
-        <Legend onToggleDistricts={() => { setDrawOld(!drawOld) }}></Legend>
-        <svg viewBox={"0 0 " + mapResX + " " + mapResY} >
-            {mapContent}
-            {districtBorders}
-        </svg >
+        <div className="flex justify-center pt-16 shadow-inner">
+            <div className="w-5/6 border-8 border-slate-700 shadow-2xl">
+                <svg className="" viewBox={"0 0 " + mapResX + " " + mapResY} >
+                    {mapContent}
+                    {districtBorders}
+                </svg >
+            </div>
+        </div>
+        <Legend showNewDistricts={props.showNewDistricts} setShowNewDistricts={props.setShowNewDistricts}></Legend>
     </div >
 }
