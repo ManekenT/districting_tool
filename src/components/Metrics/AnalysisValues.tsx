@@ -22,7 +22,7 @@ export function AnalysisValues(props: Props) {
     if (props.map !== undefined && props.districtsNew !== undefined) {
         efficiencyGapNew = efficiencyGap(props.map, props.districtsNew);
     }
-    return <div className="w-1/6 h-screen bg-slate-600 text-slate-50">
+    return <div className="w-1/6 h-screen text-slate-50">
         <Title title="Kennzahlen" />
         <div className="text-center">
             <div className="grid grid-cols-2 h-14 items-center">

@@ -13,6 +13,7 @@ import { WeightingStep } from './components/DistrictingSteps/WeightingStep';
 import { GeneratingStep } from './components/DistrictingSteps/GeneratingStep';
 import { ConstraintStep } from './components/DistrictingSteps/ConstraintsStep';
 import { doSimulatedAnnealing } from './util/simulatedAnnealing';
+import { updateMappedTypeNode } from 'typescript';
 
 export const algorithms: Algorithm[] = [{
   name: "Simulated Annealing",
@@ -45,12 +46,17 @@ function App() {
     setShowNewMap(true);
   }
 
+  function updateMap(map: GeoMap) {
+    setMap(map);
+    setShowNewMap(false);
+  }
+
   return <>
     <Header />
-    <div className='flex text-slate-50'>
-      <div className="w-1/6 h-screen bg-slate-600">
+    <div className='flex text-slate-50 bg-slate-600'>
+      <div className="w-1/6 h-screen">
         <Title title="Anleitung" />
-        <UploadStep map={map} districtsOld={districtsOld} setMap={updateState(setMap)} setDistrictsOld={updateState(setDistrictsOld)} />
+        <UploadStep map={map} districtsOld={districtsOld} setMap={updateState(updateMap)} setDistrictsOld={updateState(setDistrictsOld)} />
         <AlgorithmStep algorithm={algorithm} setAlgorithm={updateState(setAlgorithm)} />
         <WeightingStep compactness={compactness} populationEquality={populationEquality} setCompactness={updateState(setCompactness)} setPopulationEquality={updateState(setPopulationEquality)} />
         <ConstraintStep contiguity={contiguity} keepDistrictCount={keepDistrictCount} setContiguity={updateState(setContiguity)} setKeepDistrictCount={updateState(setKeepDistrictCount)} />

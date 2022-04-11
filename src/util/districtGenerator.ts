@@ -107,6 +107,17 @@ export function sumDistrictVotes(votesPerDistrict: Map<number, Votes>): Votes {
     return totalVotes;
 }
 
+export function calculateWonDistricts(votes: Map<number, Votes>): Votes {
+    let disitrictsWon = {
+        blue: 0,
+        yellow: 0
+    }
+    votes.forEach((votes) => {
+        votes.yellow > votes.blue ? disitrictsWon.yellow++ : disitrictsWon.blue++
+    })
+    return disitrictsWon
+}
+
 
 
 

@@ -1,8 +1,11 @@
 import { DistrictSchema } from "../../classes/DistrictSchema";
 import { GeoMap } from "../../classes/Map";
+import { Direction } from "../../types";
 import { getDirectionsOfDistrictBorders } from "../../util/districtGenerator";
 import { Title } from "../UI/Title";
-import { Legend } from "./Legend";
+import { Block } from "./Block";
+import { DistrictSwitch } from "./DistrictSwitch";
+import { Results } from "./Results";
 
 const mapResX = 900;
 const mapResY = 600;
@@ -21,6 +24,10 @@ interface Props {
 export function SvgMap(props: Props) {
     let districtsToDraw = props.showNewDistricts ? props.districtsNew : props.districtsOld;
 
+    function onDirectionClicked(direction: Direction) {
+        console.log(direction);
+    }
+
     let mapContent;
     if (props.map !== undefined) {
         let citizens = props.map;
@@ -36,12 +43,7 @@ export function SvgMap(props: Props) {
             if (districtsToDraw !== undefined) {
                 districtColor = districtColors[districtsToDraw.get({ x: indexX, y: indexY })];
             }
-            return <g key={citizen.id}>
-                <rect className={"" + districtColor} x={x} y={y} width={width} height={height} />
-                <circle className={"" + color} cx={x + width / 2} cy={y + height / 2} r={width / 4}></circle>
-                <text className="text-lg fill-slate-700" x={x + width / 10} y={y + height - height / 15}>{districtsToDraw && districtsToDraw.get({ x: indexX, y: indexY })}</text>
-            </g>
-
+            return <Block color={color} districtColor={districtColor} x={x} y={y} width={width} height={height} districtId={districtsToDraw && districtsToDraw.get({ x: indexX, y: indexY })} onDirectionClicked={onDirectionClicked}></Block>
         });
     }
 
@@ -68,14 +70,20 @@ export function SvgMap(props: Props) {
     }
     return <div className="w-4/6 bg-slate-500 text-slate-50">
         <Title title="Karte"></Title>
-        <div className="flex justify-center pt-16 shadow-inner">
-            <div className="w-5/6 border-8 border-slate-700 shadow-2xl">
-                <svg className="" viewBox={"0 0 " + mapResX + " " + mapResY} >
-                    {mapContent}
-                    {districtBorders}
-                </svg >
+        {districtsToDraw && props.map && <>
+            <div className="shadow-inner">
+                <Results districts={districtsToDraw} map={props.map}></Results>
+                <div className="flex justify-center">
+                    <div className="w-5/6 border-8 border-slate-700 shadow-2xl">
+                        <svg className="" viewBox={"0 0 " + mapResX + " " + mapResY} >
+                            {mapContent}
+                            {districtBorders}
+                        </svg >
+                    </div>
+                </div>
             </div>
-        </div>
-        <Legend showNewDistricts={props.showNewDistricts} setShowNewDistricts={props.setShowNewDistricts}></Legend>
+            <DistrictSwitch showNewDistricts={props.showNewDistricts} setShowNewDistricts={props.setShowNewDistricts}></DistrictSwitch>
+        </>}
     </div >
 }
+

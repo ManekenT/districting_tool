@@ -58,7 +58,7 @@ export function GeneratingStep(props: Props) {
 
     return <Step finished={props.districtsNew !== undefined} stepIndex={5} title="Generieren">
         <div className="flex justify-end mt-4">
-            <Button className="grow h-20 text-xl font-semibold mx-4" onClick={onGeneratingDistrictingData} title={title} disabled={disabled}></Button>
+            <Button className="grow text-xl font-semibold mx-4" onClick={onGeneratingDistrictingData} title={title} disabled={disabled}></Button>
         </div>
     </Step>
 }

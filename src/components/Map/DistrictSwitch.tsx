@@ -5,7 +5,7 @@ interface Props {
     setShowNewDistricts: (value: boolean) => void
 }
 
-export function Legend(props: Props) {
+export function DistrictSwitch(props: Props) {
 
     return <div className="px-4 text-lg h-14 flex justify-center">
         <Switch.Group>
