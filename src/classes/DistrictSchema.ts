@@ -41,6 +41,10 @@ export class DistrictSchema {
         this.districts[coordinate.y][coordinate.x] = id;
     }
 
+    has(coordinate: Coordinate) {
+        return coordinate.x >= 0 && coordinate.x < this.width && coordinate.y >= 0 && coordinate.y < this.height
+    }
+
     forEach(func: (id: number, coordinate: Coordinate) => void) {
         this.districts.forEach((districtColumn, y) => {
             districtColumn.forEach((id, x) => {
@@ -77,4 +81,9 @@ export class DistrictSchema {
         })
         return uniqueDistricts.size
     }
+
+    getPopulationCount() {
+        return this.width * this.height
+    }
+
 }

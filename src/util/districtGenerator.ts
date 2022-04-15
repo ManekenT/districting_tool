@@ -1,5 +1,6 @@
+import { Directions } from "../classes/Directions";
 import { DistrictSchema } from "../classes/DistrictSchema";
-import { GeoMap } from "../classes/Map";
+import { GeoMap } from "../classes/GeoMap";
 import { Parties } from "../classes/Parties";
 import { Coordinate, Direction, Votes } from "../types";
 
@@ -29,24 +30,24 @@ export function getDirectionsOfDistrictBorders(coordinate: Coordinate, districts
         eastId = districts.get(coordEast);
     }
     if (northId !== undefined && northId !== districtId) {
-        directions.push("North");
+        directions.push(Directions.NORTH);
     } else if (northId === undefined && includeMapEdge) {
-        directions.push("North");
+        directions.push(Directions.NORTH);
     }
     if (southId !== undefined && southId !== districtId) {
-        directions.push("South");
+        directions.push(Directions.SOUTH);
     } else if (southId === undefined && includeMapEdge) {
-        directions.push("South");
+        directions.push(Directions.SOUTH);
     }
     if (westId !== undefined && westId !== districtId) {
-        directions.push("West");
+        directions.push(Directions.WEST);
     } else if (westId === undefined && includeMapEdge) {
-        directions.push("West");
+        directions.push(Directions.WEST);
     }
     if (eastId !== undefined && eastId !== districtId) {
-        directions.push("East");
+        directions.push(Directions.EAST);
     } else if (eastId === undefined && includeMapEdge) {
-        directions.push("East");
+        directions.push(Directions.EAST);
     }
     return directions;
 }

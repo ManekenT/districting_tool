@@ -1,4 +1,5 @@
 import { DistrictSchema } from "./classes/DistrictSchema"
+import { GeoMap } from "./classes/GeoMap"
 
 export type Coordinate = {
     x: number,
@@ -26,12 +27,13 @@ export type Votes = {
 
 export type Algorithm = {
     name: string
-    algorithm: (districstOld: DistrictSchema, weighting: WeightingValues, constraints: Constraints) => DistrictSchema
+    algorithm: (map: GeoMap, districstOld: DistrictSchema, weighting: WeightingValues, constraints: Constraints) => DistrictSchema
 }
 
 export type WeightingValues = {
     compactness: number
-    populationEquality: number
+    populationEquality: number,
+    efficiencyGap: number
 }
 
 export type Constraints = {
@@ -39,4 +41,4 @@ export type Constraints = {
     keepDistrictCount: boolean
 }
 
-export type Direction = "North" | "South" | "East" | "West"
+export type Direction = (coordinate: Coordinate) => Coordinate

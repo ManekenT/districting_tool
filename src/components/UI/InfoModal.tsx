@@ -4,7 +4,7 @@ import { Fragment, useState } from "react"
 export function InfoModal() {
     let [isOpen, setIsOpen] = useState(false)
     return <>
-        <button type="button" className="text-base rounded-lg border-2 py-1 px-3 hover:bg-slate-50 hover:text-slate-900" onClick={() => setIsOpen(true)} >Hilfe</button>
+        <button type="button" className="text-base font-bold rounded-full border-2 py-1 px-3 hover:bg-slate-50 hover:text-slate-900" onClick={() => setIsOpen(true)} >?</button>
         <Dialog open={isOpen} onClose={() => setIsOpen(false)} as="div" className="fixed inset-0 z-10 overflow-auto">
             <div className="min-h-screen px-4 text-center">
                 <Dialog.Overlay className="fixed inset-0" />

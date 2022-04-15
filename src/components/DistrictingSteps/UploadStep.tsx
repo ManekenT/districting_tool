@@ -2,7 +2,7 @@ import { Button } from "../UI/Button";
 import { Step } from "./Step";
 import { Slider } from "../UI/Slider";
 import { useState } from "react";
-import { GeoMap } from "../../classes/Map";
+import { GeoMap } from "../../classes/GeoMap";
 import { DistrictSchema } from "../../classes/DistrictSchema";
 
 interface Props {

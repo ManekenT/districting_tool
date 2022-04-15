@@ -1,5 +1,5 @@
 import { DistrictSchema } from "../../classes/DistrictSchema";
-import { GeoMap } from "../../classes/Map";
+import { GeoMap } from "../../classes/GeoMap";
 import { Algorithm } from "../../types";
 import { Button } from "../UI/Button";
 import { Step } from "./Step";
@@ -10,6 +10,7 @@ interface Props {
     algorithm?: Algorithm
     populationEquality?: number
     compactness?: number
+    efficiencyGap?: number
     contiguity?: boolean
     keepDistrictCount?: boolean
     districtsOld?: DistrictSchema
@@ -21,8 +22,9 @@ export function GeneratingStep(props: Props) {
     function checkPrerequisites() {
         return props.map !== undefined
             && props.algorithm !== undefined
-            && props.populationEquality !== undefined
             && props.compactness !== undefined
+            && props.populationEquality !== undefined
+            && props.efficiencyGap !== undefined
             && props.contiguity !== undefined
             && props.keepDistrictCount !== undefined
             && props.districtsOld !== undefined
@@ -32,17 +34,19 @@ export function GeneratingStep(props: Props) {
         if (!checkPrerequisites()) {
             return
         }
+        let map = props.map!
         let districtsOld = props.districtsOld!
         let weighting = {
             populationEquality: props.populationEquality!,
-            compactness: props.compactness!
+            compactness: props.compactness!,
+            efficiencyGap: props.efficiencyGap!
         }
         let constraints = {
             contiguity: props.contiguity!,
             keepDistrictCount: props.keepDistrictCount!
         }
 
-        let districts = props.algorithm!.algorithm(districtsOld, weighting, constraints);
+        let districts = props.algorithm!.algorithm(map, districtsOld, weighting, constraints);
         props.setDistrictsNew(districts)
     }
 

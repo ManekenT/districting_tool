@@ -31,6 +31,13 @@ export function decimalToPercentString(number?: number): string {
     return Math.abs((number * 100)).toFixed(4) + " %";
 }
 
+export function roundedString(number?: number): string {
+    if (number === undefined) {
+        return "";
+    }
+    return number.toFixed(2);
+}
+
 export function closerToZero(a: number, b: number): number {
     return Math.abs(b) - Math.abs(a);
 }

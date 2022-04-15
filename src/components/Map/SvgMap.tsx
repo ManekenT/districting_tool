@@ -1,7 +1,9 @@
+import { Directions } from "../../classes/Directions";
 import { DistrictSchema } from "../../classes/DistrictSchema";
-import { GeoMap } from "../../classes/Map";
-import { Direction } from "../../types";
+import { GeoMap } from "../../classes/GeoMap";
+import { Coordinate, Direction } from "../../types";
 import { getDirectionsOfDistrictBorders } from "../../util/districtGenerator";
+import { deepCopyArray } from "../../util/util";
 import { Title } from "../UI/Title";
 import { Block } from "./Block";
 import { DistrictSwitch } from "./DistrictSwitch";
@@ -11,29 +13,56 @@ const mapResX = 900;
 const mapResY = 600;
 const borderSize = 6;
 
-const districtColors = ["fill-red-200", "fill-green-200", "fill-blue-200"];
+const districtColors = [{
+    color: "fill-red-200",
+    hoverColor: "hover:fill-red-200"
+},
+{
+    color: "fill-blue-200",
+    hoverColor: "hover:fill-blue-200"
+},
+{
+    color: "fill-green-200",
+    hoverColor: "hover:fill-green-200"
+}]
 
 interface Props {
     map?: GeoMap
     showNewDistricts: boolean
     setShowNewDistricts: (value: boolean) => void
     districtsOld?: DistrictSchema
+    setNewDistricts: (districts: DistrictSchema) => void
     districtsNew?: DistrictSchema
 }
 
 export function SvgMap(props: Props) {
     let districtsToDraw = props.showNewDistricts ? props.districtsNew : props.districtsOld;
 
-    function onDirectionClicked(direction: Direction) {
-        console.log(direction);
+    function onDirectionClicked(coordinate: Coordinate, direction: Direction) {
+        if (props.districtsNew && props.showNewDistricts) {
+            let districts = deepCopyArray(props.districtsNew)
+            if (districts.has(direction(coordinate))) {
+                districts.set(coordinate, districts.get(direction(coordinate)))
+            }
+            props.setNewDistricts(districts);
+        }
     }
 
     let mapContent;
     if (props.map !== undefined) {
         let citizens = props.map;
-        mapContent = citizens.map((citizen, coordinates) => {
-            let indexX = coordinates.x
-            let indexY = coordinates.y
+        mapContent = citizens.map((citizen, coordinate) => {
+            function onHover(direction: Direction) {
+                if (districtsToDraw === undefined) {
+                    return "hover:fill-slate-200"
+                }
+                if (!districtsToDraw.has(direction(coordinate))) {
+                    return districtColors[districtsToDraw.get(coordinate)].hoverColor
+                }
+                return districtColors[districtsToDraw.get(direction(coordinate))].hoverColor
+            }
+            let indexX = coordinate.x
+            let indexY = coordinate.y
             const width = mapResX / citizens.width
             const height = mapResY / citizens.height
             const x = indexX * width
@@ -41,9 +70,20 @@ export function SvgMap(props: Props) {
             let color = citizen.vote === undefined ? "fill-slate-500" : citizen.vote.color;
             let districtColor = "fill-slate-200";
             if (districtsToDraw !== undefined) {
-                districtColor = districtColors[districtsToDraw.get({ x: indexX, y: indexY })];
+                districtColor = districtColors[districtsToDraw.get({ x: indexX, y: indexY })].color;
             }
-            return <Block color={color} districtColor={districtColor} x={x} y={y} width={width} height={height} districtId={districtsToDraw && districtsToDraw.get({ x: indexX, y: indexY })} onDirectionClicked={onDirectionClicked}></Block>
+            return <Block key={citizen.id}
+                color={color}
+                districtColor={districtColor}
+                x={x}
+                y={y}
+                width={width}
+                height={height}
+                districtId={districtsToDraw && districtsToDraw.get({ x: indexX, y: indexY })}
+                interactive={props.showNewDistricts}
+                onDirectionClicked={(direction) => onDirectionClicked(coordinate, direction)}
+                onHover={(direction) => onHover(direction)}
+            />
         });
     }
 
@@ -58,9 +98,9 @@ export function SvgMap(props: Props) {
             const x = indexX * width
             const y = indexY * height
             return getDirectionsOfDistrictBorders(coordinate, districts).map(direction => {
-                if (direction === "North") {
+                if (direction === Directions.NORTH) {
                     return <rect key={"borderNorth" + indexX + indexY} className="fill-slate-700" x={x - borderSize / 2} y={y - borderSize / 2} width={width + borderSize} height={borderSize}></rect>
-                } else if (direction === "East") {
+                } else if (direction === Directions.EAST) {
                     return <rect key={"borderEast" + indexX + indexY} className="fill-slate-700" x={x + width - borderSize / 2} y={y - borderSize / 2} width={borderSize} height={height + borderSize}></rect>
                 }
                 return null;
@@ -70,20 +110,20 @@ export function SvgMap(props: Props) {
     }
     return <div className="w-4/6 bg-slate-500 text-slate-50">
         <Title title="Karte"></Title>
-        {districtsToDraw && props.map && <>
-            <div className="shadow-inner">
-                <Results districts={districtsToDraw} map={props.map}></Results>
-                <div className="flex justify-center">
-                    <div className="w-5/6 border-8 border-slate-700 shadow-2xl">
-                        <svg className="" viewBox={"0 0 " + mapResX + " " + mapResY} >
-                            {mapContent}
-                            {districtBorders}
-                        </svg >
-                    </div>
+        <div className="shadow-inner">
+            <Results districts={districtsToDraw} map={props.map}></Results>
+            <div className="flex justify-center">
+                <div className="w-5/6 border-8 border-slate-700 shadow-2xl">
+                    <svg className="" viewBox={"0 0 " + mapResX + " " + mapResY} >
+                        {mapContent}
+                        {districtBorders}
+                    </svg >
                 </div>
             </div>
+        </div>
+        {props.districtsNew &&
             <DistrictSwitch showNewDistricts={props.showNewDistricts} setShowNewDistricts={props.setShowNewDistricts}></DistrictSwitch>
-        </>}
+        }
     </div >
 }
 

@@ -15,12 +15,12 @@ export function DistrictSwitch(props: Props) {
                     checked={props.showNewDistricts}
                     onChange={props.setShowNewDistricts}
                     className={`${props.showNewDistricts ? 'bg-slate-700' : 'bg-slate-200'
-                        } relative inline-flex items-center h-6 rounded-full w-11`}
+                        } relative inline-flex items-center h-6 rounded-full w-11 transition-colors`}
                 >
                     <span className="sr-only">Enable notifications</span>
                     <span
                         className={`${props.showNewDistricts ? 'translate-x-6' : 'translate-x-1'
-                            } inline-block w-4 h-4 transform bg-slate-50 rounded-full`}
+                            } inline-block w-4 h-4 transform bg-slate-50 rounded-full transition-transform`}
                     />
                 </Switch>
                 <Switch.Label className="ml-4 font-semibold">Neue Bezirke</Switch.Label>
