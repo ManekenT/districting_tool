@@ -1,6 +1,7 @@
 import { Directions } from "../../classes/Directions";
 import { DistrictSchema } from "../../classes/DistrictSchema";
 import { GeoMap } from "../../classes/GeoMap";
+import { MapHelp } from "../../helptexts/map";
 import { Coordinate, Direction } from "../../types";
 import { getDirectionsOfDistrictBorders } from "../../util/districtGenerator";
 import { deepCopyArray } from "../../util/util";
@@ -36,6 +37,28 @@ interface Props {
 }
 
 export function SvgMap(props: Props) {
+    if (!props.districtsOld && !props.districtsNew) {
+        return <div className="w-7/12 bg-slate-500 text-slate-50">
+            <Title title="Karte" helpText={<MapHelp />}></Title>
+            <div className=" m-8 flex flex-col items-center align-middle ">
+                <div className="prose bg-slate-50 rounded-md p-4 w-fit">
+                    <h1>
+                        Willkommen im Districting Tool
+                    </h1>
+                    <p>
+                        Mit diesem Tool können sie automatisiert Wahlkreiseinteilungen anhand eigens ausgewählter Parameter erstellen.
+                        Folgen sie den Schritten auf der linken Seite um eine neue Einteilung zu erstellen
+                    </p>
+                    <p>
+                        <b>
+                            Die ?-Knöpfe liefern Erklärungen zu einzelnen Schritten oder Auswahlmöglichkeiten.
+                        </b>
+                    </p>
+                </div>
+            </div>
+        </div>
+    }
+
     let districtsToDraw = props.showNewDistricts ? props.districtsNew : props.districtsOld;
 
     function onDirectionClicked(coordinate: Coordinate, direction: Direction) {
@@ -108,8 +131,8 @@ export function SvgMap(props: Props) {
 
         });
     }
-    return <div className="w-4/6 bg-slate-500 text-slate-50">
-        <Title title="Karte"></Title>
+    return <div className="w-7/12 bg-slate-500 text-slate-50">
+        <Title title="Karte" helpText={<MapHelp />}></Title>
         <div className="shadow-inner">
             <Results districts={districtsToDraw} map={props.map}></Results>
             <div className="flex justify-center">

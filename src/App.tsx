@@ -13,10 +13,13 @@ import { WeightingStep } from './components/DistrictingSteps/WeightingStep';
 import { GeneratingStep } from './components/DistrictingSteps/GeneratingStep';
 import { ConstraintStep } from './components/DistrictingSteps/ConstraintsStep';
 import { doSimulatedAnnealing } from './util/simulatedAnnealing';
+import { SimulatedAnnealingHelp } from './helptexts/algorithms/simulatedAnnealing';
+import { StepsHelp } from './helptexts/steps';
 
 export const algorithms: Algorithm[] = [{
   name: "Simulated Annealing",
   algorithm: doSimulatedAnnealing,
+  helpText: <SimulatedAnnealingHelp />
 }]
 
 
@@ -58,8 +61,8 @@ function App() {
   return <>
     <Header />
     <div className='flex text-slate-50 bg-slate-600'>
-      <div className="w-1/6 h-screen">
-        <Title title="Anleitung" />
+      <div className="w-3/12 h-screen">
+        <Title title="Anleitung" helpText={StepsHelp()} />
         <UploadStep map={map} districtsOld={districtsOld} setMap={updateState(updateMap)} setDistrictsOld={updateState(setDistrictsOld)} />
         <AlgorithmStep algorithm={algorithm} setAlgorithm={updateState(setAlgorithm)} />
         <WeightingStep compactness={compactness} populationEquality={populationEquality} efficiencyGap={efficiencyGap} setCompactness={updateState(setCompactness)} setPopulationEquality={updateState(setPopulationEquality)} setEfficiencyGap={updateState(setEfficiencyGap)} />

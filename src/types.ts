@@ -1,3 +1,4 @@
+import React from "react"
 import { DistrictSchema } from "./classes/DistrictSchema"
 import { GeoMap } from "./classes/GeoMap"
 
@@ -28,6 +29,7 @@ export type Votes = {
 export type Algorithm = {
     name: string
     algorithm: (map: GeoMap, districstOld: DistrictSchema, weighting: WeightingValues, constraints: Constraints) => DistrictSchema
+    helpText: React.ReactNode
 }
 
 export type WeightingValues = {

@@ -1,5 +1,6 @@
 import { DistrictSchema } from "../../classes/DistrictSchema";
 import { GeoMap } from "../../classes/GeoMap";
+import { GenerateHelp } from "../../helptexts/steps/generate";
 import { Algorithm } from "../../types";
 import { Button } from "../UI/Button";
 import { Step } from "./Step";
@@ -60,7 +61,7 @@ export function GeneratingStep(props: Props) {
         disabled = true
     }
 
-    return <Step finished={props.districtsNew !== undefined} stepIndex={5} title="Generieren">
+    return <Step finished={props.districtsNew !== undefined} stepIndex={5} title="Generieren" helpText={<GenerateHelp />}>
         <div className="flex justify-end mt-4">
             <Button className="grow text-xl font-semibold mx-4" onClick={onGeneratingDistrictingData} title={title} disabled={disabled}></Button>
         </div>

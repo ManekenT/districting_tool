@@ -1,3 +1,4 @@
+import { InfoModal } from "../UI/InfoModal"
 
 interface Props {
     title: string
@@ -5,6 +6,7 @@ interface Props {
     value2?: number
     comparisonFunction: (a: number, b: number) => number
     displayString?: (value?: number) => string
+    helpText: React.ReactNode
 }
 
 export function ValueComparison(props: Props) {
@@ -25,7 +27,12 @@ export function ValueComparison(props: Props) {
     let value1String: string = props.value1 === undefined ? "N/A" : props.displayString !== undefined ? props.displayString(props.value1) : props.value1.toString();
     let value2String: string = props.value2 === undefined ? "N/A" : props.displayString !== undefined ? props.displayString(props.value2) : props.value2.toString();
     return <div className="grid grid-cols-2">
-        <div className=" col-span-2 text-center bg-slate-700 h-12 flex justify-center items-center">{props.title}</div>
+        <div className=" col-span-2 text-center bg-slate-700 h-12 flex justify-center items-center">
+            <div className="flex gap-2 items-center">
+                {props.title}
+                <InfoModal>{props.helpText}</InfoModal>
+            </div>
+        </div>
         <div className={"text-center p-2 " + color1}>{value1String}</div>
         <div className={"text-center p-2 " + color2}>{value2String}</div>
     </div>

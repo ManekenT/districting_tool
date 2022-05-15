@@ -14,6 +14,7 @@ export function efficiencyGap(map: GeoMap, districts: DistrictSchema): { gap: nu
     let voteDifferences = totalWastedVotes.blue - totalWastedVotes.yellow;
 
     let efficiencyGap = voteDifferences / totalVoteCount;
+    efficiencyGap = normalizeEfficiencyGap(efficiencyGap)
     return {
         gap: efficiencyGap,
         wastedVotes: totalWastedVotes
@@ -32,22 +33,24 @@ export function compactness(districts: DistrictSchema): number {
             districtValues = { perimiter: 0, area: 0 };
         }
         districtValues.area++;
-        districtValues.perimiter += getDirectionsOfDistrictBorders(coordinate, districts, true).length / 4;
+        districtValues.perimiter += getDirectionsOfDistrictBorders(coordinate, districts, true).length;
         compactnessPerDistrict.set(id, districtValues);
     });
-    let compactness = Array.from(compactnessPerDistrict.keys()).reduce((a, b) => {
-        let values = compactnessPerDistrict.get(b)!;
-        return a + getCompactnessValue(values.area, values.perimiter)
+    let compactness = 0;
+    Array.from(compactnessPerDistrict.keys()).forEach(index => {
+        let values = compactnessPerDistrict.get(index)!;
+        compactness += getCompactnessValue(values.area, values.perimiter)
     });
-    return compactness;
+    compactness = compactness / districts.getDistrictCount()
+    return normalizeCompactness(compactness);
 }
 
 function getCompactnessValue(area: number, perimiter: number): number {
-    return perimiter / Math.sqrt(area) - 1
+    return 4 * Math.PI * area / Math.pow(perimiter, 2)
 }
 
 function normalizeCompactness(value: number) {
-    return value
+    return 1 - value
 }
 
 export function populationEquality(districts: DistrictSchema): number {
@@ -61,27 +64,33 @@ export function populationEquality(districts: DistrictSchema): number {
         districtValue++;
         populationPerDistrict.set(id, districtValue);
     });
-    let populationEquality = Array.from(populationPerDistrict.keys()).reduce((a, b) => {
-        let value = populationPerDistrict.get(b)!;
-        return a + getPopulationEqualityValue(value, equalPopulationAmount);
+    let populationEquality = 0;
+    Array.from(populationPerDistrict.keys()).forEach(index => {
+        let value = populationPerDistrict.get(index)!;
+        populationEquality += getPopulationEqualityValue(value, equalPopulationAmount)
     });
-    return populationEquality / 1000
+    populationEquality = populationEquality / districts.getDistrictCount()
+    return normalizePopulationEquality(populationEquality, districts.getPopulationCount(), equalPopulationAmount);
 }
 
 function getPopulationEqualityValue(population: number, expectedPopulation: number): number {
-    return Math.pow((1 - population / expectedPopulation) * (1 / 0.05), 2)
+    return Math.abs(population - expectedPopulation)
 }
 
-function normalizePopulationEquaity(value: number) {
-    return value
+function normalizePopulationEquality(value: number, popCount: number, equalPopAmount: number) {
+    let maxDifference = popCount - equalPopAmount
+    if (maxDifference === 0) {
+        return 0;
+    }
+    return value / maxDifference
 }
 
 export function getOptimizationValue(map: GeoMap, districts: DistrictSchema, weightingValues: WeightingValues) {
     let populationEqualityValue = populationEquality(districts);
     let compactnessValue = compactness(districts);
     let efficiencyGapValue = efficiencyGap(map, districts);
-    let value = weightingValues.populationEquality * normalizePopulationEquaity(populationEqualityValue) +
-        weightingValues.compactness * normalizeCompactness(compactnessValue) +
-        weightingValues.efficiencyGap * normalizeEfficiencyGap(efficiencyGapValue.gap);
+    let value = weightingValues.populationEquality * populationEqualityValue +
+        weightingValues.compactness * compactnessValue +
+        weightingValues.efficiencyGap * efficiencyGapValue.gap;
     return value
 }
