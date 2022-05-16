@@ -1,8 +1,8 @@
 export function ContiguityHelp() {
     return <>
-        <h1>Zusammenhängig</h1>
+        <h1>Zusammenhängigkeit</h1>
         <p>
-            Sollen die Bezirke zusammenhängig sein
+            Mit dieser Einschränkungen generiert der Algorithmus nur Einteilungen, bei denen alle Bezirke aus jeweils einem zusammenhängenden Bereich bestehen.
         </p>
     </>
 }

@@ -8,7 +8,7 @@ interface Props {
 export function InfoModal(props: Props) {
     let [isOpen, setIsOpen] = useState(false)
     return <>
-        <button type="button" className="text-base font-bold rounded-2xl border-2 py-1 px-2 hover:bg-slate-50 hover:text-slate-900" onClick={() => setIsOpen(true)} >?</button>
+        <button type="button" className="text-base font-bold rounded-2xl border-2 px-2 hover:bg-slate-50 hover:text-slate-900" onClick={() => setIsOpen(true)} >?</button>
         <Dialog open={isOpen} onClose={() => setIsOpen(false)} as="div" className="fixed inset-0 z-10 overflow-auto">
             <div className="min-h-screen px-4 text-center">
                 <Dialog.Overlay className="fixed inset-0" />

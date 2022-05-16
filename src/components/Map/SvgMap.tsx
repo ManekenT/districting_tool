@@ -46,7 +46,7 @@ export function SvgMap(props: Props) {
                         Willkommen im Districting Tool
                     </h1>
                     <p>
-                        Mit diesem Tool können sie automatisiert Wahlkreiseinteilungen anhand eigens ausgewählter Parameter erstellen.
+                        Mit diesem Tool können Sie algorithmusgestützt Wahlkreiseinteilungen anhand eigens ausgewählter Parameter erstellen.
                         Folgen sie den Schritten auf der linken Seite um eine neue Einteilung zu erstellen
                     </p>
                     <p>
