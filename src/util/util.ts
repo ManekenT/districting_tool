@@ -24,10 +24,7 @@ export function deepCopyArray(districts: DistrictSchema): DistrictSchema {
     return new DistrictSchema(districts.width, districts.height, deepCopy);
 }
 
-export function decimalToPercentString(number?: number): string {
-    if (number === undefined) {
-        return "";
-    }
+export function decimalToPercentString(number: number): string {
     return Math.abs((number * 100)).toFixed(4) + " %";
 }
 

@@ -39,9 +39,9 @@ export function AnalysisValues(props: Props) {
                 <div className="p-2">Alte Wahlbezirke</div>
                 <div className="p-2 font-semibold">Neue Wahlbezirke</div>
             </div>
-            <ValueComparison title="Kompaktheit" comparisonFunction={closerToZero} displayString={roundedString} value1={compactnessOld} value2={compactnessNew} helpText={<CompactnessHelp />} />
-            <ValueComparison title="Bevölkerungsgleichheit" comparisonFunction={closerToZero} displayString={roundedString} value1={populationEqualityOld} value2={populationEqualityNew} helpText={<PopulationEqualityHelp />} />
-            <ValueComparison title="Efficiency Gap" comparisonFunction={closerToZero} displayString={decimalToPercentString} value1={efficiencyGapOld?.gap} value2={efficiencyGapNew?.gap} helpText={<EfficiencyGapHelp />}></ValueComparison>
+            <ValueComparison title="Kompaktheit" value1={compactnessOld} value2={compactnessNew} helpText={<CompactnessHelp />} />
+            <ValueComparison title="Bevölkerungsgleichheit" value1={populationEqualityOld} value2={populationEqualityNew} helpText={<PopulationEqualityHelp />} />
+            <ValueComparison title="Efficiency Gap" value1={efficiencyGapOld?.gap} value2={efficiencyGapNew?.gap} helpText={<EfficiencyGapHelp />}></ValueComparison>
         </div>
 
     </div>
