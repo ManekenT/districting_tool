@@ -24,10 +24,6 @@ export function AlgorithmStep(props: Props) {
                     { }
                 </div>
             </RadioGroup>
-            <div className="flex items-center gap-x-2">
-                <Button className="font-bold grow" title={"+"}></Button>
-                <InfoModal><NewAlgorithmHelp /></InfoModal>
-            </div>
         </div>
     </Step >
 }
