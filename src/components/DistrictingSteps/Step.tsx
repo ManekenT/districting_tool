@@ -13,7 +13,7 @@ export function Step(props: Props) {
     return <div className="text-slate-50 border-slate-50 mb-4" >
         <div className={`text-xl font-semibold flex items-center px-4 py-2 transition-colors ${color}`}>
             {props.stepIndex + ". " + props.title}
-            <div className="flex-grow" />
+            <div className="grow" />
             <InfoModal>{props.helpText}</InfoModal>
         </div>
         <div className="p-4">

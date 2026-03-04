@@ -25,7 +25,7 @@ export function ValueBar(props: Props) {
                     return <RadioGroup.Option value={value} key={value}
                         className={({ active, checked }) =>
                             `${checked ? "bg-slate-200 text-slate-700 shadow-inner" : 'bg-slate-700'} 
-                        shadow-md px-5 py-1 cursor-pointer flex focus:outline-none first:rounded-l-lg last:rounded-r-lg`
+                        shadow-md px-5 py-1 cursor-pointer flex focus:outline-hidden first:rounded-l-lg last:rounded-r-lg`
                         }
                     >
                         {({ active, checked }) => (
